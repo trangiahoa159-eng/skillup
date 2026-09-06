@@ -2,7 +2,7 @@
    SkillUp — Shared stylesheet
    Used by every skill page. Do NOT duplicate this into
    individual skill .html files — link to it instead:
-   <link rel="stylesheet" href="../shared/styles.css">
+   <link rel="stylesheet" href="../shared/style.css">
    ========================================================= */
 
 :root {
