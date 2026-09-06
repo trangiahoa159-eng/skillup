@@ -1,0 +1,1584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkillUp - Self-Reflection</title>
+    <!-- Google Inter Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-dark: #05070f;
+            --glass-bg: rgba(15, 22, 41, 0.65);
+            --glass-card: rgba(255, 255, 255, 0.03);
+            --glass-card-hover: rgba(255, 255, 255, 0.07);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --glass-border-light: rgba(255, 255, 255, 0.25);
+
+            --accent-purple: #6366f1;
+            --accent-indigo: #818cf8;
+            --accent-cyan: #38bdf8;
+            --accent-pink: #ec4899;
+
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --text-dim: #64748b;
+
+            --correct-bg: rgba(34, 197, 94, 0.15);
+            --correct-border: #22c55e;
+            --incorrect-bg: rgba(239, 68, 68, 0.15);
+            --incorrect-border: #ef4444;
+
+            --ease-smooth: cubic-bezier(0.16, 1, 0.3, 1);
+            --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            background-image:
+                radial-gradient(circle at 50% 0%, rgba(99, 102, 241, 0.15), transparent 70%),
+                radial-gradient(circle at 80% 80%, rgba(56, 189, 248, 0.1), transparent 50%);
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 2.5rem 1rem 0 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Ambient Glow Blobs - Slow Floating */
+        .ambient-glow {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(120px);
+            z-index: -1;
+            pointer-events: none;
+            opacity: 0.5;
+            will-change: transform;
+        }
+        .glow-1 {
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.8) 0%, rgba(99, 102, 241, 0) 70%);
+            top: -150px;
+            left: -150px;
+            animation: floatGlow1 22s infinite alternate ease-in-out;
+        }
+        .glow-2 {
+            width: 550px;
+            height: 550px;
+            background: radial-gradient(circle, rgba(6, 182, 212, 0.7) 0%, rgba(6, 182, 212, 0) 70%);
+            bottom: -200px;
+            right: -150px;
+            animation: floatGlow2 26s infinite alternate ease-in-out;
+        }
+        .glow-3 {
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(236, 72, 153, 0.4) 0%, rgba(236, 72, 153, 0) 70%);
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: floatGlow3 18s infinite alternate ease-in-out;
+        }
+
+        @keyframes floatGlow1 {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(80px, 60px) scale(1.2); }
+        }
+        @keyframes floatGlow2 {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(-70px, -50px) scale(1.15); }
+        }
+        @keyframes floatGlow3 {
+            0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0.2; }
+            100% { transform: translate(-40%, -60%) scale(1.2); opacity: 0.5; }
+        }
+
+        .container {
+            max-width: 880px;
+            width: 100%;
+            z-index: 1;
+            flex: 1;
+        }
+
+        /* Back Link */
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            color: #ffffff;
+            text-decoration: none;
+            margin-bottom: 2rem;
+            font-size: 0.92rem;
+            font-weight: 600;
+            padding: 0.65rem 1.4rem;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(56, 189, 248, 0.2));
+            border: 1px solid rgba(129, 140, 248, 0.4);
+            border-radius: 30px;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            transition: all 0.5s var(--ease-smooth);
+            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        .back-link::after {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
+            transition: left 0.7s var(--ease-smooth);
+        }
+        .back-link:hover::after {
+            left: 100%;
+        }
+        .back-link:hover {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.45), rgba(56, 189, 248, 0.45));
+            border-color: rgba(255, 255, 255, 0.7);
+            transform: translateX(-6px) scale(1.02);
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.5);
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+            animation: fadeInDown 0.8s var(--ease-smooth);
+        }
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .header-badge {
+            display: inline-block;
+            padding: 0.4rem 1.1rem;
+            font-size: 0.78rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: #e0e7ff;
+            background: rgba(99, 102, 241, 0.2);
+            border: 1px solid rgba(129, 140, 248, 0.4);
+            border-radius: 30px;
+            margin-bottom: 1rem;
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.3);
+        }
+
+        .brand-title {
+            display: inline-block;
+            font-size: 2.8rem;
+            font-weight: 900;
+            letter-spacing: -0.03em;
+            margin-bottom: 0.6rem;
+            background: linear-gradient(135deg, #ffffff 20%, #c7d2fe 60%, #38bdf8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            cursor: pointer;
+            transition: transform 0.4s var(--ease-bounce), filter 0.4s ease;
+            position: relative;
+        }
+        .brand-title:hover {
+            transform: scale(1.03);
+            filter: drop-shadow(0 0 15px rgba(99, 102, 241, 0.6));
+        }
+
+        .header p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            font-weight: 400;
+        }
+
+        /* TAB NAVIGATION SLIDER */
+        .tab-navigation {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2.2rem;
+            transition: all 0.7s var(--ease-smooth);
+        }
+
+        .tab-btn {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2.2rem 1.5rem;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            color: var(--text-muted);
+            cursor: pointer;
+            backdrop-filter: blur(30px) saturate(180%);
+            -webkit-backdrop-filter: blur(30px) saturate(180%);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+            transition: all 0.5s var(--ease-smooth);
+            text-align: center;
+            gap: 0.9rem;
+            overflow: hidden;
+        }
+
+        .tab-btn::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
+            transition: left 0.8s var(--ease-smooth);
+        }
+        .tab-btn:hover::before {
+            left: 100%;
+        }
+
+        .tab-btn svg {
+            width: 40px;
+            height: 40px;
+            transition: all 0.5s var(--ease-bounce);
+            color: var(--accent-indigo);
+            filter: drop-shadow(0 0 8px rgba(129, 140, 248, 0.4));
+        }
+
+        .tab-btn-text {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        .tab-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #ffffff;
+            transition: color 0.4s ease;
+        }
+
+        .tab-desc {
+            font-size: 0.88rem;
+            color: var(--text-muted);
+            font-weight: 400;
+            max-width: 280px;
+            transition: all 0.4s var(--ease-smooth);
+            opacity: 1;
+            max-height: 60px;
+        }
+
+        .tab-btn:hover {
+            transform: translateY(-8px) scale(1.02);
+            border-color: rgba(129, 140, 248, 0.5);
+            background: rgba(30, 41, 67, 0.7);
+            box-shadow: 0 20px 45px rgba(99, 102, 241, 0.35), 0 0 20px rgba(56, 189, 248, 0.2);
+        }
+
+        .tab-btn:hover svg {
+            transform: scale(1.2) rotate(-5deg);
+            color: var(--accent-cyan);
+            filter: drop-shadow(0 0 12px rgba(56, 189, 248, 0.8));
+        }
+
+        .tab-navigation.shrunk {
+            display: flex;
+            background: rgba(10, 15, 30, 0.8);
+            border: 1px solid var(--glass-border-light);
+            padding: 8px;
+            border-radius: 20px;
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
+            gap: 8px;
+        }
+
+        .tab-navigation.shrunk .tab-btn {
+            flex: 1;
+            flex-direction: row;
+            padding: 1rem 1.4rem;
+            border-radius: 14px;
+            background: transparent;
+            border: none;
+            box-shadow: none;
+            gap: 0.7rem;
+        }
+
+        .tab-navigation.shrunk .tab-btn svg {
+            width: 22px;
+            height: 22px;
+        }
+
+        .tab-navigation.shrunk .tab-btn-text {
+            flex-direction: row;
+        }
+
+        .tab-navigation.shrunk .tab-title {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .tab-navigation.shrunk .tab-desc {
+            opacity: 0;
+            max-height: 0;
+            display: none;
+        }
+
+        .tab-navigation.shrunk .tab-btn:hover:not(.active) {
+            transform: scale(1.02);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .tab-navigation.shrunk .tab-btn.active {
+            color: #ffffff;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.9), rgba(79, 70, 229, 0.95));
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.4);
+        }
+
+        .tab-content {
+            display: none;
+            opacity: 0;
+            transform: translateY(25px) scale(0.98);
+            transition: opacity 0.5s var(--ease-smooth), transform 0.5s var(--ease-smooth);
+            will-change: transform, opacity;
+        }
+
+        .tab-content.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        .glass-panel {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            padding: 2.5rem;
+            backdrop-filter: blur(35px) saturate(180%);
+            -webkit-backdrop-filter: blur(35px) saturate(180%);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.15);
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            letter-spacing: -0.01em;
+        }
+        .section-title span {
+            font-size: 1.5rem;
+            filter: drop-shadow(0 0 8px rgba(255,255,255,0.4));
+        }
+
+        .knowledge-def {
+            font-size: 1.08rem;
+            line-height: 1.75;
+            color: #e2e8f0;
+            background: rgba(255, 255, 255, 0.025);
+            border: 1px solid var(--glass-border);
+            border-left: 4px solid var(--accent-indigo);
+            padding: 1.5rem;
+            border-radius: 18px;
+            margin-bottom: 2.2rem;
+            backdrop-filter: blur(10px);
+            box-shadow: inset 0 0 20px rgba(99, 102, 241, 0.05);
+            transition: all 0.4s var(--ease-smooth);
+        }
+        .knowledge-def:hover {
+            border-left-color: var(--accent-cyan);
+            background: rgba(255, 255, 255, 0.04);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .pillars-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 1.4rem;
+            margin-bottom: 2.2rem;
+        }
+
+        .pillar-card {
+            background: var(--glass-card);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 1.6rem;
+            transition: all 0.5s var(--ease-smooth);
+            position: relative;
+            overflow: hidden;
+        }
+        .pillar-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-purple), var(--accent-cyan), var(--accent-pink));
+            opacity: 0;
+            transition: opacity 0.4s var(--ease-smooth);
+        }
+        .pillar-card:hover {
+            background: var(--glass-card-hover);
+            border-color: var(--glass-border-light);
+            transform: translateY(-6px) scale(1.01);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3), 0 0 20px rgba(99, 102, 241, 0.15);
+        }
+        .pillar-card:hover::before {
+            opacity: 1;
+        }
+        .pillar-card h3 {
+            color: #c7d2fe;
+            margin-bottom: 0.7rem;
+            font-size: 1.15rem;
+            font-weight: 700;
+        }
+        .pillar-card p {
+            color: var(--text-muted);
+            font-size: 0.96rem;
+            line-height: 1.65;
+        }
+
+        .practical-section {
+            margin-top: 2.2rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--glass-border);
+        }
+
+        .action-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+            margin-bottom: 2.2rem;
+        }
+
+        .action-item {
+            display: flex;
+            gap: 1.3rem;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 1.4rem;
+            align-items: flex-start;
+            transition: all 0.4s var(--ease-smooth);
+        }
+        .action-item:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(129, 140, 248, 0.4);
+            transform: translateX(6px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+        }
+        .action-icon {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.25), rgba(56, 189, 248, 0.25));
+            width: 52px;
+            height: 52px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 16px;
+            flex-shrink: 0;
+            border: 1px solid rgba(129, 140, 248, 0.3);
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.2);
+            transition: transform 0.4s var(--ease-bounce);
+        }
+        .action-item:hover .action-icon {
+            transform: scale(1.15) rotate(5deg);
+        }
+        .action-content h4 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #f1f5f9;
+            margin-bottom: 0.4rem;
+        }
+        .action-content p {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        .pro-tip {
+            background: linear-gradient(135deg, rgba(234, 179, 8, 0.15), rgba(245, 158, 11, 0.06));
+            border: 1px solid rgba(245, 158, 11, 0.4);
+            border-radius: 20px;
+            padding: 1.4rem 1.6rem;
+            color: #fef08a;
+            font-size: 0.98rem;
+            line-height: 1.65;
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            box-shadow: 0 8px 25px rgba(245, 158, 11, 0.15);
+            transition: all 0.4s var(--ease-smooth);
+        }
+        .pro-tip:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(245, 158, 11, 0.25);
+        }
+        .pro-tip-icon {
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .quiz-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.4rem;
+            color: var(--text-muted);
+            font-size: 0.98rem;
+            font-weight: 700;
+        }
+
+        .score-badge {
+            background: rgba(99, 102, 241, 0.25);
+            color: #c7d2fe;
+            padding: 0.45rem 1.1rem;
+            border-radius: 30px;
+            border: 1px solid rgba(99, 102, 241, 0.4);
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.2);
+        }
+
+        #score {
+            display: inline-block;
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 2.2rem;
+            padding: 2px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple), var(--accent-pink));
+            border-radius: 10px;
+            transition: width 0.6s var(--ease-smooth);
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.8);
+        }
+
+        #quiz-container {
+            transition: opacity 0.4s var(--ease-smooth), transform 0.4s var(--ease-smooth);
+        }
+
+        .question-text {
+            font-size: 1.35rem;
+            font-weight: 800;
+            line-height: 1.55;
+            margin-bottom: 2rem;
+            color: #ffffff;
+            letter-spacing: -0.01em;
+        }
+
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .option-btn {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 1.2rem 1.5rem;
+            color: var(--text-main);
+            font-size: 1.02rem;
+            font-weight: 500;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.35s var(--ease-smooth);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            border-color: rgba(129, 140, 248, 0.5);
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateX(8px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+
+        .option-btn:disabled {
+            cursor: default;
+        }
+
+        .option-btn.correct {
+            background: var(--correct-bg) !important;
+            border-color: var(--correct-border) !important;
+            color: #4ade80 !important;
+            box-shadow: 0 0 20px rgba(34, 197, 94, 0.3);
+            animation: bounceSelect 0.4s var(--ease-bounce);
+        }
+
+        .option-btn.incorrect {
+            background: var(--incorrect-bg) !important;
+            border-color: var(--incorrect-border) !important;
+            color: #f87171 !important;
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+            animation: shake 0.4s ease-in-out;
+        }
+
+        @keyframes bounceSelect {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-6px); }
+            40%, 80% { transform: translateX(6px); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(14px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes scorePop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.35); color: #4ade80; }
+            100% { transform: scale(1); }
+        }
+
+        .explanation-box {
+            display: none;
+            padding: 1.4rem 1.6rem;
+            border-radius: 16px;
+            font-size: 1rem;
+            line-height: 1.65;
+            margin-bottom: 2rem;
+            animation: fadeInSlide 0.5s var(--ease-smooth);
+        }
+
+        @keyframes fadeInSlide {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .explanation-box.show-correct {
+            background: var(--correct-bg);
+            border: 1px solid var(--correct-border);
+            color: #bbf7d0;
+        }
+
+        .explanation-box.show-incorrect {
+            background: var(--incorrect-bg);
+            border: 1px solid var(--incorrect-border);
+            color: #fecaca;
+        }
+
+        .action-btn {
+            background: linear-gradient(135deg, var(--accent-purple), #4f46e5);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 1rem 2.4rem;
+            border-radius: 14px;
+            font-size: 1.05rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: none;
+            margin-left: auto;
+            transition: all 0.4s var(--ease-smooth);
+            box-shadow: 0 10px 25px rgba(99, 102, 241, 0.4);
+        }
+
+        .action-btn:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 15px 35px rgba(99, 102, 241, 0.6);
+        }
+
+        .result-screen {
+            text-align: center;
+            display: none;
+            padding: 2.5rem 1rem;
+            transition: opacity 0.5s var(--ease-smooth), transform 0.5s var(--ease-smooth);
+        }
+
+        .result-title {
+            font-size: 2.2rem;
+            font-weight: 900;
+            color: #ffffff;
+            margin-bottom: 0.6rem;
+        }
+
+        .result-score {
+            font-size: 4.5rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #a5b4fc, #6366f1, #38bdf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 1rem 0;
+            letter-spacing: -0.04em;
+            filter: drop-shadow(0 10px 20px rgba(99, 102, 241, 0.3));
+        }
+
+        .star-rating {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            letter-spacing: 0.3rem;
+            filter: drop-shadow(0 0 10px rgba(250, 204, 21, 0.5));
+        }
+
+        .feedback-text {
+            color: var(--text-muted);
+            font-size: 1.15rem;
+            margin-bottom: 2.5rem;
+            max-width: 520px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.65;
+        }
+
+        .restart-btn {
+            background: linear-gradient(135deg, var(--accent-purple), #4f46e5);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 1.1rem 3rem;
+            border-radius: 16px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.4s var(--ease-smooth);
+            box-shadow: 0 12px 30px rgba(99, 102, 241, 0.5);
+        }
+
+        .restart-btn:hover {
+            transform: translateY(-3px) scale(1.03);
+            box-shadow: 0 18px 40px rgba(99, 102, 241, 0.7);
+        }
+
+        .site-footer {
+            width: 100vw;
+            background: rgba(5, 7, 15, 0.85);
+            border-top: 1px solid var(--glass-border);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 1.8rem 1rem;
+            margin-top: 4rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        .footer-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1.2rem;
+        }
+
+        .footer-left {
+            display: flex;
+            align-items: center;
+            gap: 0.9rem;
+            cursor: pointer;
+        }
+
+        .footer-badge-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #a855f7, #6366f1);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-weight: 900;
+            font-size: 1rem;
+            box-shadow: 0 0 15px rgba(168, 85, 247, 0.5);
+            transition: transform 0.3s var(--ease-bounce);
+        }
+
+        .footer-left:hover .footer-badge-icon {
+            transform: scale(1.15) rotate(-5deg);
+        }
+
+        .copyright-text {
+            color: var(--text-muted);
+            font-size: 0.92rem;
+            font-weight: 500;
+        }
+
+        .footer-links {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .footer-link {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.92rem;
+            font-weight: 500;
+            transition: color 0.3s ease, transform 0.3s ease;
+        }
+
+        .footer-link:hover {
+            color: var(--accent-cyan);
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 680px) {
+            body { padding: 1.5rem 0.8rem 0 0.8rem; }
+            .glass-panel { padding: 1.6rem; border-radius: 22px; }
+            .brand-title { font-size: 2.2rem; }
+            .result-score { font-size: 3.5rem; }
+            .action-item { flex-direction: column; }
+            .tab-navigation { grid-template-columns: 1fr; }
+            .footer-inner { flex-direction: column; text-align: center; justify-content: center; }
+            .footer-links { gap: 1.2rem; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="ambient-glow glow-1"></div>
+<div class="ambient-glow glow-2"></div>
+<div class="ambient-glow glow-3"></div>
+
+<div class="container">
+    <a href="01.html" class="back-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+        Back to Oneself
+    </a>
+
+    <div class="header">
+        <span class="header-badge">Core Skill #04</span>
+        <div>
+            <h1 id="skill-title" class="brand-title" onclick="resetToHome()" title="Click to reset view">Self-Reflection</h1>
+        </div>
+        <p id="skill-subtitle">Reflect on your daily behaviors and decisions</p>
+    </div>
+
+    <div class="tab-navigation" id="tab-nav">
+        <button class="tab-btn" onclick="switchTab('knowledge-tab')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
+            <div class="tab-btn-text">
+                <span class="tab-title">Essential Knowledge</span>
+                <span class="tab-desc">Explore theories, pillars &amp; practical frameworks</span>
+            </div>
+        </button>
+        <button class="tab-btn" onclick="switchTab('quiz-tab')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+            <div class="tab-btn-text">
+                <span class="tab-title">Quiz Assessment</span>
+                <span class="tab-desc">Test your understanding with 10 random questions</span>
+            </div>
+        </button>
+    </div>
+
+    <div id="knowledge-tab" class="tab-content">
+        <div class="glass-panel">
+            <div class="section-title">
+                <span>📝</span> The Essence of Self-Reflection
+            </div>
+            <div id="knowledge-def" class="knowledge-def">Loading theory...</div>
+
+            <div class="section-title" style="margin-top: 2.2rem;">
+                <span>🏛️</span> Core Pillars
+            </div>
+            <div id="pillars-grid" class="pillars-grid"></div>
+
+            <div class="practical-section">
+                <div class="section-title">
+                    <span>🚀</span> Practical Action Framework
+                </div>
+                <div class="action-list">
+                    <div class="action-item">
+                        <div class="action-icon">📓</div>
+                        <div class="action-content">
+                            <h4>Weekly Journal Habit</h4>
+                            <p>Set aside a few minutes each week to write down what happened, how you reacted, and what you'd do differently.</p>
+                        </div>
+                    </div>
+
+                    <div class="action-item">
+                        <div class="action-icon">❓</div>
+                        <div class="action-content">
+                            <h4>The 5 Whys</h4>
+                            <p>When something bothers you, ask "why" to your own answer five times in a row until you reach the real root cause.</p>
+                        </div>
+                    </div>
+
+                    <div class="action-item">
+                        <div class="action-icon">🔍</div>
+                        <div class="action-content">
+                            <h4>Pattern Review</h4>
+                            <p>Every month, skim back through your notes looking for the same reaction or outcome showing up more than once.</p>
+                        </div>
+                    </div>
+
+                    <div class="action-item">
+                        <div class="action-icon">🎯</div>
+                        <div class="action-content">
+                            <h4>One Lesson, One Action</h4>
+                            <p>For every reflection, land on exactly one concrete thing you'll try differently next time.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pro-tip">
+                    <span class="pro-tip-icon">💡</span>
+                    <div>
+                        <strong>Pro-Tip:</strong> Reflection that only replays the past without landing on an action is rumination, not growth \u2014 always end with one specific next step.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="quiz-tab" class="tab-content">
+        <div class="glass-panel">
+            <div class="quiz-header">
+                <span>Question <span id="current-question">1</span>/<span id="total-questions">10</span></span>
+                <span class="score-badge">Score: <span id="score">0</span></span>
+            </div>
+
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+
+            <div id="quiz-container">
+                <div class="question-text" id="question-text">Loading question...</div>
+                <div class="options-list" id="options-list"></div>
+                <div class="explanation-box" id="explanation-box"></div>
+                <button class="action-btn" id="next-btn" onclick="nextQuestion()">Continue</button>
+            </div>
+
+            <div class="result-screen" id="result-screen">
+                <h2 class="result-title">Assessment Complete!</h2>
+                <div class="result-score" id="final-score">0/10</div>
+                <div class="star-rating" id="star-rating">⭐⭐⭐</div>
+                <p class="feedback-text" id="feedback-text">Great job on completing the assessment!</p>
+                <button class="restart-btn" onclick="resetQuiz()">Retake Quiz</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer class="site-footer">
+    <div class="footer-inner">
+        <div class="footer-left" onclick="resetToHome()">
+            <div class="footer-badge-icon">S</div>
+            <span class="copyright-text">&copy; 2026 SkillUp. All rights reserved.</span>
+        </div>
+        <div class="footer-links">
+            <a href="#" class="footer-link">Privacy Policy</a>
+            <a href="#" class="footer-link">Terms of Service</a>
+            <a href="#" class="footer-link">Support</a>
+        </div>
+    </div>
+</footer>
+
+<script>
+    /* =========================================================
+       TAB SWITCHING
+       ========================================================= */
+    function switchTab(tabId) {
+        document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+
+        const nav = document.getElementById('tab-nav');
+        nav.classList.add('shrunk');
+
+        const activeContent = document.getElementById(tabId);
+        if (activeContent) activeContent.classList.add('active');
+
+        const activeBtn = document.querySelector(`[onclick="switchTab('${tabId}')"]`);
+        if (activeBtn) activeBtn.classList.add('active');
+
+        if (tabId === 'quiz-tab' && quizState.questions.length === 0) {
+            startQuiz();
+        }
+    }
+
+    function resetToHome() {
+        const nav = document.getElementById('tab-nav');
+        nav.classList.remove('shrunk');
+        document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    }
+
+    /* =========================================================
+       CONTENT DATA
+       ========================================================= */
+    const selfDiscoveryContent = {
+        definition: "Self-reflection is the deliberate practice of looking back on your experiences, decisions, and emotional reactions to understand why things happened the way they did \u2014 turning raw experience into lessons you can actually use, rather than letting it pass by unexamined.",
+        pillars: [
+            {
+                title: "Looking Back Honestly",
+                text: "Reviewing what actually happened, not the version that's most flattering or most comfortable to remember."
+            },
+            {
+                title: "Understanding the \u201cWhy\u201d",
+                text: "Digging past the surface reaction to find the real cause behind a decision or emotion."
+            },
+            {
+                title: "Recognizing Patterns",
+                text: "Noticing behaviors or outcomes that repeat across different situations, not just isolated incidents."
+            },
+            {
+                title: "Turning Experience Into Lessons",
+                text: "Converting what you notice into one specific change for next time, not just a passing thought."
+            }
+        ]
+    };
+
+    /* =========================================================
+       QUIZ QUESTION BANK
+       Each question has 4 options, each with its OWN explanation.
+       correctIndex marks the correct option (index into "options").
+       ========================================================= */
+    const quizBank = [
+        {
+            question: "What is self-reflection?",
+            options: [
+                { text: "Worrying repeatedly about past mistakes", explanation: "Worrying without examination doesn't produce useful insight." },
+                { text: "The practice of thoughtfully examining your experiences to understand and learn from them", explanation: "Correct. Self-reflection is the deliberate process of examining experiences to draw lessons from them." },
+                { text: "Comparing your life to other people's", explanation: "Comparison with others is unrelated to reflecting on your own experience." },
+                { text: "Making a list of your accomplishments", explanation: "A list of accomplishments alone doesn't involve examining or learning from them." },
+            ],
+            correctIndex: 1
+        },
+        {
+            question: "Why is looking back at past experiences useful?",
+            options: [
+                { text: "It lets you relive the past exactly as it happened", explanation: "Memory of the past is rarely an exact replay of events." },
+                { text: "It helps you notice what worked, what didn't, and why", explanation: "Correct. Reviewing experiences reveals useful patterns about what worked and what didn't." },
+                { text: "It guarantees you'll never repeat a mistake", explanation: "Reflection improves your odds, but it doesn't guarantee mistake-free behavior." },
+                { text: "It replaces the need to plan for the future", explanation: "Reflection informs planning; it doesn't replace it." },
+            ],
+            correctIndex: 1
+        },
+        {
+            question: "What does \"learning from mistakes\" primarily involve?",
+            options: [
+                { text: "Feeling guilty until you forget about the mistake", explanation: "Guilt alone, without analysis, doesn't produce learning." },
+                { text: "Identifying what went wrong and what you'd do differently next time", explanation: "Correct. Identifying the cause and an alternative approach is what turns a mistake into a lesson." },
+                { text: "Blaming external circumstances for what happened", explanation: "Blaming outside factors prevents you from examining your own role." },
+                { text: "Avoiding any activity where you previously made a mistake", explanation: "Avoiding the activity entirely removes the chance to apply what you learned." },
+            ],
+            correctIndex: 1
+        },
+        {
+            question: "What is the purpose of journaling as a reflection tool?",
+            options: [
+                { text: "To create a public record for others to read", explanation: "Journaling is typically a private practice, not meant for a public audience." },
+                { text: "To externalize your thoughts and notice patterns over time", explanation: "Correct. Writing thoughts down helps you notice recurring patterns you might otherwise miss." },
+                { text: "To prove how busy your schedule is", explanation: "Journaling isn't primarily about documenting busyness." },
+                { text: "To replace conversations with other people", explanation: "Journaling complements conversation with others; it doesn't need to replace it." },
+            ],
+            correctIndex: 1
+        },
+        {
+            question: "Why is asking \"Why?\" a useful reflection technique?",
+            options: [
+                { text: "It helps you dig past the surface reaction to find the underlying cause", explanation: "Correct. Repeatedly asking \"why\" helps trace a reaction back to its root cause." },
+                { text: "It lets you blame someone else more precisely", explanation: "The goal is to understand the cause, not to assign blame elsewhere." },
+                { text: "It stops you from having to make a decision", explanation: "Asking why is meant to clarify a decision, not delay it indefinitely." },
+                { text: "It only works for large, life-changing events", explanation: "The technique works for everyday situations as well as major ones." },
+            ],
+            correctIndex: 0
+        },
+        {
+            question: "What does it mean to \"recognize patterns\" in self-reflection?",
+            options: [
+                { text: "Noticing recurring behaviors, reactions, or outcomes across different situations", explanation: "Correct. Pattern recognition is about spotting behaviors or outcomes that repeat over time." },
+                { text: "Predicting the future with certainty", explanation: "Reflection can inform expectations, but it doesn't guarantee certainty about the future." },
+                { text: "Copying patterns you see in someone else's life", explanation: "Patterns need to come from your own experience to be useful to you." },
+                { text: "Only noticing patterns that happened once", explanation: "A single occurrence isn't yet a pattern; patterns require repetition." },
+            ],
+            correctIndex: 0
+        },
+        {
+            question: "What is the value of turning experiences into lessons?",
+            options: [
+                { text: "It lets you avoid ever making a similar decision again", explanation: "Avoidance isn't the same as applying a lesson; sometimes the same choice with adjustments is right." },
+                { text: "It converts raw experience into practical guidance for future choices", explanation: "Correct. Turning experience into a lesson makes it usable for better future decisions." },
+                { text: "It removes the need to reflect on anything else", explanation: "New experiences will keep generating new things worth reflecting on." },
+                { text: "It only applies to negative experiences", explanation: "Positive experiences can also generate useful lessons." },
+            ],
+            correctIndex: 1
+        },
+        {
+            question: "After a project fails, what is the most productive first step?",
+            options: [
+                { text: "Immediately start a new project without reviewing what happened", explanation: "Moving on without review skips the chance to learn anything useful." },
+                { text: "Calmly review what happened and identify specific contributing factors", explanation: "Correct. A calm, specific review is what turns failure into useful insight." },
+                { text: "Assume the failure was entirely someone else's fault", explanation: "Assigning blame without examination overlooks your own role." },
+                { text: "Decide never to lead a project again", explanation: "One failure doesn't necessarily mean avoiding all future leadership roles." },
+            ],
+            correctIndex: 1
+        },
+        {
+            question: "You notice you feel unusually irritated during a normal meeting. What is the best reflective response?",
+            options: [
+                { text: "Assume the meeting itself was objectively bad", explanation: "The meeting quality is a possibility, but it's not the only explanation." },
+                { text: "Suppress the feeling and move on without examining it", explanation: "Suppressing feelings without examining them limits self-understanding." },
+                { text: "Pause and consider what specifically triggered the irritation", explanation: "Correct. Examining the specific trigger helps you understand your own reaction." },
+                { text: "Blame a coworker immediately without more thought", explanation: "Jumping to blame skips the step of actually understanding the reaction." },
+            ],
+            correctIndex: 2
+        },
+        {
+            question: "You keep journaling about feeling exhausted after certain types of days. What should you do with this pattern?",
+            options: [
+                { text: "Ignore it since journaling is just for venting", explanation: "A pattern that keeps showing up is worth investigating, not dismissing." },
+                { text: "Look for what those days have in common and consider adjustments", explanation: "Correct. Identifying the common factor lets you make an informed adjustment." },
+                { text: "Stop journaling since it's revealing an inconvenient pattern", explanation: "Avoiding the journal doesn't remove the underlying pattern." },
+                { text: "Assume exhaustion is unavoidable and unrelated to your schedule", explanation: "Exhaustion is often connected to specific, identifiable factors." },
+            ],
+            correctIndex: 1
+        },
+        {
+            question: "You made a decision last year that didn't work out. A similar situation is coming up again. What should you do?",
+            options: [
+                { text: "Repeat the exact same decision without any changes", explanation: "Repeating the same approach ignores what you learned from the outcome." },
+                { text: "Avoid the situation completely out of fear", explanation: "Avoidance prevents you from applying the lesson you gained." },
+                { text: "Reflect on what you learned last time and apply it to this new decision", explanation: "Correct. Reflecting on the earlier outcome lets you make a more informed choice now." },
+                { text: "Let someone else decide for you", explanation: "Handing off the decision skips the chance to apply your own growth." },
+            ],
+            correctIndex: 2
+        },
+        {
+            question: "A friend points out that you always get defensive when someone questions your work. You hadn't noticed this before. What's the best next step?",
+            options: [
+                { text: "Deny it immediately", explanation: "Denying it without reflection blocks you from checking whether it's accurate." },
+                { text: "Reflect honestly on times this may have happened and consider why", explanation: "Correct. Honest reflection on the pattern helps you evaluate and understand it." },
+                { text: "Stop accepting feedback from that friend", explanation: "Cutting off the source of feedback removes a chance for insight." },
+                { text: "Assume they are exaggerating without checking", explanation: "Assuming exaggeration skips the step of honestly checking the claim." },
+            ],
+            correctIndex: 1
+        },
+        {
+            question: "You notice you always procrastinate on a specific type of task. What is the most useful reflective question to ask?",
+            options: [
+                { text: "\"Why do I keep avoiding this particular type of task?\"", explanation: "Correct. This question targets the specific cause behind your own pattern." },
+                { text: "\"Why do other people not procrastinate at all?\"", explanation: "This shifts focus away from your own situation and assumes others never struggle." },
+                { text: "\"How can I hide the fact that I'm behind?\"", explanation: "Hiding the issue avoids addressing the underlying cause." },
+                { text: "\"Who can I blame for this task existing?\"", explanation: "Blame doesn't help you understand or change your own behavior." },
+            ],
+            correctIndex: 0
+        },
+        {
+            question: "After receiving a low score on a test you studied hard for, what is the most reflective approach?",
+            options: [
+                { text: "Conclude that studying doesn't work for you", explanation: "One result doesn't prove that studying in general is ineffective." },
+                { text: "Review your study method and identify what could be adjusted", explanation: "Correct. Reviewing your method can reveal specific, fixable issues." },
+                { text: "Assume the test was unfair without checking your answers", explanation: "Assuming unfairness skips a look at your own preparation and answers." },
+                { text: "Avoid studying for the next test altogether", explanation: "Giving up on studying removes the chance to apply any lesson learned." },
+            ],
+            correctIndex: 1
+        },
+        {
+            question: "You find yourself reacting strongly to a specific type of comment from others. What might this suggest, and what should you do?",
+            options: [
+                { text: "Ignore it completely since emotions aren't important", explanation: "Emotional reactions often carry useful information worth examining." },
+                { text: "It may be worth exploring, since strong reactions often point to something meaningful to you", explanation: "Correct. A strong, repeated reaction is often a signal worth reflecting on." },
+                { text: "Assume the other person is always wrong", explanation: "The other person's accuracy isn't automatically determined by your reaction." },
+                { text: "Avoid ever talking to people who make that type of comment", explanation: "Avoiding everyone who triggers the reaction prevents you from understanding it." },
+            ],
+            correctIndex: 1
+        },
+        {
+            question: "What is a practical way to start a regular self-reflection habit?",
+            options: [
+                { text: "Wait for a major life event before reflecting", explanation: "Waiting for major events misses the value of regular, smaller reflection." },
+                { text: "Set aside a few minutes at a consistent time, like weekly, to review recent experiences", explanation: "Correct. A consistent, scheduled habit makes reflection more likely to actually happen." },
+                { text: "Only reflect when someone else tells you to", explanation: "Reflection is most useful when it's a habit you choose for yourself." },
+                { text: "Reflect exclusively on other people's actions", explanation: "Reflection should center on your own experience and choices." },
+            ],
+            correctIndex: 1
+        },
+        {
+            question: "What is an effective way to use the \"5 Whys\" technique in reflection?",
+            options: [
+                { text: "Ask \"why\" once and stop at the first answer", explanation: "Stopping after one \"why\" often only reaches a surface-level explanation." },
+                { text: "Repeatedly ask \"why\" to each answer to dig toward the root cause", explanation: "Correct. Repeating the question digs past surface reasons toward the underlying cause." },
+                { text: "Ask \"why\" only about other people's decisions", explanation: "The technique is most useful when applied to your own reactions and decisions." },
+                { text: "Skip the process and guess the root cause", explanation: "Guessing skips the structured process that makes the technique useful." },
+            ],
+            correctIndex: 1
+        },
+        {
+            question: "What is a good method for recognizing patterns in your behavior?",
+            options: [
+                { text: "Reviewing notes or journal entries across several weeks or months for repeated themes", explanation: "Correct. Reviewing entries over time reveals patterns a single moment can't show." },
+                { text: "Relying only on how you feel about yourself right now", explanation: "Current mood can bias how you view your overall patterns." },
+                { text: "Only considering the most recent event", explanation: "A single recent event isn't enough to establish a real pattern." },
+                { text: "Asking a stranger to describe your patterns for you", explanation: "A stranger typically doesn't have enough context about your history." },
+            ],
+            correctIndex: 0
+        },
+        {
+            question: "What is a useful way to turn a difficult experience into a practical lesson?",
+            options: [
+                { text: "Write down what happened, what you learned, and what you'd do differently", explanation: "Correct. This structured approach converts the experience into something actionable." },
+                { text: "Try to forget the experience as quickly as possible", explanation: "Forgetting quickly skips the chance to extract any useful lesson." },
+                { text: "Retell the story the same way every time without examining it", explanation: "Repeating the same account without examination doesn't generate new insight." },
+                { text: "Focus only on how unfair the experience was", explanation: "Focusing only on unfairness can block a more complete, useful analysis." },
+            ],
+            correctIndex: 0
+        },
+        {
+            question: "Which action best applies a lesson learned from a past mistake?",
+            options: [
+                { text: "Talking about the mistake often without changing your behavior", explanation: "Talking about it without behavior change doesn't apply the lesson." },
+                { text: "Adjusting your approach the next time a similar situation arises", explanation: "Correct. Changing your approach is how a lesson actually gets put into practice." },
+                { text: "Avoiding the topic completely", explanation: "Avoidance prevents the lesson from being applied at all." },
+                { text: "Repeating the exact same actions to see if the outcome changes", explanation: "Repeating the same actions ignores what was learned." },
+            ],
+            correctIndex: 1
+        },
+        {
+            question: "Which statement reflects genuine self-reflection rather than simple rumination?",
+            options: [
+                { text: "\"I keep replaying the event and feeling worse, without any new insight.\"", explanation: "Repeating the same negative loop without new insight is rumination, not reflection." },
+                { text: "\"I've thought about what happened and identified one specific thing I'll do differently.\"", explanation: "Correct. Reflection produces a specific, actionable insight rather than just repeated distress." },
+                { text: "\"I refuse to think about it at all.\"", explanation: "Avoiding the topic blocks any useful reflection from happening." },
+                { text: "\"I only think about how the other person was wrong.\"", explanation: "Focusing only on the other person skips examining your own role." },
+            ],
+            correctIndex: 1
+        },
+        {
+            question: "Which of these is the healthiest way to process a strong emotional reaction?",
+            options: [
+                { text: "Suppress it and pretend it didn't happen", explanation: "Suppression tends to leave the underlying trigger unresolved." },
+                { text: "Acknowledge the emotion and explore what triggered it", explanation: "Correct. Acknowledging and exploring the trigger supports genuine understanding." },
+                { text: "Act on it immediately without any thought", explanation: "Acting immediately without reflection can lead to regretted responses." },
+                { text: "Blame yourself harshly for feeling it at all", explanation: "Harsh self-blame adds unnecessary distress without adding insight." },
+            ],
+            correctIndex: 1
+        },
+        {
+            question: "Which habit is most likely to help you recognize your own patterns over time?",
+            options: [
+                { text: "Keeping a regular journal or log of experiences and reactions", explanation: "Correct. A written record makes it much easier to spot patterns across time." },
+                { text: "Relying entirely on memory without any written record", explanation: "Memory alone is prone to gaps and bias." },
+                { text: "Only reflecting after major failures", explanation: "Regular smaller reflection catches patterns that occasional major reviews might miss." },
+                { text: "Comparing your patterns to a stranger's life", explanation: "A stranger's life doesn't reveal anything about your own patterns." },
+            ],
+            correctIndex: 0
+        },
+        {
+            question: "Why might someone avoid self-reflection even though it's useful?",
+            options: [
+                { text: "Because it's always a pleasant and comfortable process", explanation: "Reflection can be uncomfortable, which is part of why people avoid it." },
+                { text: "Because it can require facing uncomfortable truths about themselves", explanation: "Correct. Facing an honest, sometimes unflattering picture of yourself takes courage." },
+                { text: "Because it takes no time or effort at all", explanation: "Meaningful reflection does take deliberate time and effort." },
+                { text: "Because it's not connected to personal growth in any way", explanation: "Reflection is actually closely tied to personal growth." },
+            ],
+            correctIndex: 1
+        },
+        {
+            question: "What is the difference between self-reflection and self-criticism?",
+            options: [
+                { text: "They are exactly the same thing", explanation: "They involve different intentions and outcomes." },
+                { text: "Reflection seeks understanding and improvement; criticism often just judges harshly", explanation: "Correct. Reflection aims to understand and improve, while harsh criticism tends to just judge." },
+                { text: "Self-criticism is always more useful than reflection", explanation: "Harsh criticism without understanding rarely leads to productive change." },
+                { text: "Reflection never involves acknowledging mistakes", explanation: "Reflection often does involve honestly acknowledging mistakes, but constructively." },
+            ],
+            correctIndex: 1
+        },
+        {
+            question: "Which question best supports deep self-reflection after an argument?",
+            options: [
+                { text: "\"How can I make sure I win the next one?\"", explanation: "Focusing on winning skips understanding your own reaction." },
+                { text: "\"What was I feeling, and what led me to react that way?\"", explanation: "Correct. This question digs into your own emotional process and its cause." },
+                { text: "\"How can I prove I was right?\"", explanation: "Proving you were right isn't the same as understanding what happened." },
+                { text: "\"Why does this person always cause problems?\"", explanation: "Blaming the other person avoids examining your own part in it." },
+            ],
+            correctIndex: 1
+        },
+        {
+            question: "Which practice best supports learning from past decisions?",
+            options: [
+                { text: "Reviewing the outcome and reasoning behind a decision after enough time has passed", explanation: "Correct. Reviewing both good and bad outcomes helps refine your future decision-making." },
+                { text: "Never revisiting past decisions once they are made", explanation: "Avoiding review removes the chance to learn from the decision at all." },
+                { text: "Only reviewing decisions that turned out badly", explanation: "Reviewing only bad outcomes misses lessons from what worked well too." },
+                { text: "Assuming every past decision was correct", explanation: "Assuming correctness without review prevents any real learning." },
+            ],
+            correctIndex: 0
+        },
+        {
+            question: "What is a sign that reflection has actually led to growth?",
+            options: [
+                { text: "You feel briefly better but behave the same way next time", explanation: "A temporary mood boost without behavior change isn't evidence of growth." },
+                { text: "You notice a genuine change in how you approach a similar situation", explanation: "Correct. A real shift in approach shows the reflection actually translated into learning." },
+                { text: "You avoid the situation being reflected on completely", explanation: "Avoidance doesn't demonstrate that any growth has occurred." },
+                { text: "You forget about the reflection shortly after", explanation: "Forgetting the insight suggests it wasn't retained or applied." },
+            ],
+            correctIndex: 1
+        },
+        {
+            question: "Why is it useful to reflect on positive experiences, not just negative ones?",
+            options: [
+                { text: "Positive experiences have nothing to teach you", explanation: "Positive experiences often reveal what strategies or conditions work well for you." },
+                { text: "Understanding what worked well helps you repeat it intentionally", explanation: "Correct. Identifying what worked lets you recreate those conditions on purpose." },
+                { text: "Reflecting on success is a waste of time", explanation: "Reflecting on success can be just as valuable as reflecting on failure." },
+                { text: "Only failures are worth examining", explanation: "Both successes and failures offer useful material for reflection." },
+            ],
+            correctIndex: 1
+        },
+        {
+            question: "What is the ultimate goal of consistent self-reflection?",
+            options: [
+                { text: "To dwell on the past indefinitely", explanation: "Dwelling without moving toward insight isn't the intended outcome." },
+                { text: "To translate experience into better self-understanding and future decisions", explanation: "Correct. The end goal is applying what you learn to understand yourself and decide better going forward." },
+                { text: "To find fault in yourself as often as possible", explanation: "Reflection isn't meant to be a search for constant fault." },
+                { text: "To avoid ever making a new decision without over-analyzing it", explanation: "Excessive over-analysis can become an obstacle rather than a helpful habit." },
+            ],
+            correctIndex: 1
+        },
+    ];
+
+    const QUESTIONS_PER_QUIZ = 10;
+
+    let quizState = {
+        questions: [],
+        currentIndex: 0,
+        score: 0,
+        answered: false
+    };
+
+    /* =========================================================
+       INIT
+       ========================================================= */
+    document.addEventListener('DOMContentLoaded', () => {
+        renderKnowledge();
+    });
+
+    /* =========================================================
+       KNOWLEDGE TAB RENDER
+       ========================================================= */
+    function renderKnowledge() {
+        const defEl = document.getElementById('knowledge-def');
+        defEl.style.opacity = 0;
+        defEl.textContent = selfDiscoveryContent.definition;
+        requestAnimationFrame(() => {
+            defEl.style.transition = 'opacity 0.6s ease';
+            defEl.style.opacity = 1;
+        });
+
+        const grid = document.getElementById('pillars-grid');
+        grid.innerHTML = selfDiscoveryContent.pillars.map((p, i) => `
+            <div class="pillar-card" style="animation: fadeInUp 0.5s var(--ease-smooth) ${i * 0.08}s backwards;">
+                <h3>${p.title}</h3>
+                <p>${p.text}</p>
+            </div>
+        `).join('');
+    }
+
+    /* =========================================================
+       QUIZ LOGIC
+       ========================================================= */
+    function shuffleArray(arr) {
+        const a = [...arr];
+        for (let i = a.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [a[i], a[j]] = [a[j], a[i]];
+        }
+        return a;
+    }
+
+    function startQuiz() {
+        const picked = shuffleArray(quizBank).slice(0, QUESTIONS_PER_QUIZ);
+
+        quizState.questions = picked.map(q => {
+            const optionsWithFlag = q.options.map((opt, i) => ({
+                text: opt.text,
+                explanation: opt.explanation,
+                isCorrect: i === q.correctIndex
+            }));
+            return {
+                question: q.question,
+                options: shuffleArray(optionsWithFlag)
+            };
+        });
+
+        quizState.currentIndex = 0;
+        quizState.score = 0;
+
+        document.getElementById('quiz-container').style.display = 'block';
+        document.getElementById('result-screen').style.display = 'none';
+        document.getElementById('total-questions').textContent = QUESTIONS_PER_QUIZ;
+        document.getElementById('score').textContent = 0;
+
+        renderQuestion();
+    }
+
+    function renderQuestion() {
+        const total = quizState.questions.length;
+        const idx = quizState.currentIndex;
+        const q = quizState.questions[idx];
+
+        const quizContainer = document.getElementById('quiz-container');
+        quizContainer.style.opacity = 0;
+        quizContainer.style.transform = 'translateY(10px)';
+
+        setTimeout(() => {
+            document.getElementById('current-question').textContent = idx + 1;
+            document.getElementById('progress-bar').style.width = `${(idx / total) * 100}%`;
+            document.getElementById('question-text').textContent = q.question;
+
+            const list = document.getElementById('options-list');
+            list.innerHTML = '';
+            q.options.forEach((opt, i) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.style.animation = `fadeInUp 0.4s var(--ease-smooth) ${i * 0.06}s backwards`;
+                btn.textContent = opt.text;
+                btn.onclick = () => selectOption(i);
+                list.appendChild(btn);
+            });
+
+            const explBox = document.getElementById('explanation-box');
+            explBox.className = 'explanation-box';
+            explBox.style.display = 'none';
+            explBox.innerHTML = '';
+
+            document.getElementById('next-btn').style.display = 'none';
+            quizState.answered = false;
+
+            requestAnimationFrame(() => {
+                quizContainer.style.opacity = 1;
+                quizContainer.style.transform = 'translateY(0)';
+            });
+        }, 180);
+    }
+
+    function selectOption(selectedIdx) {
+        if (quizState.answered) return;
+        quizState.answered = true;
+
+        const q = quizState.questions[quizState.currentIndex];
+        const selectedOpt = q.options[selectedIdx];
+        const correctIdx = q.options.findIndex(o => o.isCorrect);
+        const isCorrect = selectedOpt.isCorrect;
+
+        const buttons = document.querySelectorAll('#options-list .option-btn');
+        buttons.forEach((btn, i) => {
+            btn.disabled = true;
+            if (i === correctIdx) btn.classList.add('correct');
+            else if (i === selectedIdx) btn.classList.add('incorrect');
+        });
+
+        if (isCorrect) {
+            quizState.score++;
+            const scoreEl = document.getElementById('score');
+            scoreEl.textContent = quizState.score;
+            scoreEl.style.animation = 'none';
+            void scoreEl.offsetWidth;
+            scoreEl.style.animation = 'scorePop 0.4s var(--ease-bounce)';
+        }
+
+        const explBox = document.getElementById('explanation-box');
+        explBox.classList.add(isCorrect ? 'show-correct' : 'show-incorrect');
+        explBox.style.display = 'block';
+        explBox.innerHTML = `<strong>${isCorrect ? '✅ Correct!' : '❌ Not quite.'}</strong><br>${selectedOpt.explanation}`;
+
+        const nextBtn = document.getElementById('next-btn');
+        const isLast = quizState.currentIndex === quizState.questions.length - 1;
+        nextBtn.textContent = isLast ? 'View Results' : 'Continue';
+        nextBtn.style.display = 'inline-block';
+        nextBtn.style.animation = 'fadeInUp 0.4s var(--ease-smooth)';
+    }
+
+    function nextQuestion() {
+        quizState.currentIndex++;
+        if (quizState.currentIndex >= quizState.questions.length) {
+            showResults();
+        } else {
+            renderQuestion();
+        }
+    }
+
+    function showResults() {
+        document.getElementById('progress-bar').style.width = '100%';
+
+        const quizContainer = document.getElementById('quiz-container');
+        quizContainer.style.opacity = 0;
+
+        setTimeout(() => {
+            quizContainer.style.display = 'none';
+
+            const resultScreen = document.getElementById('result-screen');
+            resultScreen.style.display = 'block';
+            resultScreen.style.opacity = 0;
+            resultScreen.style.transform = 'scale(0.96)';
+
+            const total = quizState.questions.length;
+            const score = quizState.score;
+            const pct = score / total;
+
+            document.getElementById('final-score').textContent = `${score}/${total}`;
+
+            let stars, feedback;
+            if (pct === 1) {
+                stars = '⭐⭐⭐⭐⭐';
+                feedback = "Outstanding! You have a strong, honest understanding of self-reflection.";
+            } else if (pct >= 0.8) {
+                stars = '⭐⭐⭐⭐';
+                feedback = "Great job! You clearly grasp most of the key ideas — just a few spots to revisit.";
+            } else if (pct >= 0.6) {
+                stars = '⭐⭐⭐';
+                feedback = "Solid effort! Review the Essential Knowledge tab to sharpen a few concepts.";
+            } else if (pct >= 0.4) {
+                stars = '⭐⭐';
+                feedback = "You're getting there — go back through the theory before trying again.";
+            } else {
+                stars = '⭐';
+                feedback = "Don't worry — self-reflection is a process. Revisit the knowledge tab and try again.";
+            }
+
+            document.getElementById('star-rating').textContent = stars;
+            document.getElementById('feedback-text').textContent = feedback;
+
+            requestAnimationFrame(() => {
+                resultScreen.style.opacity = 1;
+                resultScreen.style.transform = 'scale(1)';
+            });
+        }, 400);
+    }
+
+    function resetQuiz() {
+        const resultScreen = document.getElementById('result-screen');
+        resultScreen.style.opacity = 0;
+        setTimeout(() => {
+            quizState.questions = [];
+            startQuiz();
+        }, 300);
+    }
+</script>
+
+</body>
+</html>

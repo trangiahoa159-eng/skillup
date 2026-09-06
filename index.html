@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skillup</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- AMBIENT GLOW BACKGROUNDS -->
+    <div class="ambient-glow-1"></div>
+    <div class="ambient-glow-2"></div>
+
+    <!-- HEADER -->
+    <header class="header">
+        <div class="container header-inner">
+            <a href="index.html" class="logo">
+                <div class="logo-icon">S</div>
+                <span>SkillUp</span>
+            </a>
+
+            <nav class="nav" id="mainNav">
+                <div class="nav-pill" id="navPill"></div>
+                <a href="index.html" class="nav-link active">Home</a>
+                <a href="2.html" class="nav-link">Skills</a>
+                <a href="3.html" class="nav-link">About</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- HERO SECTION -->
+    <main class="hero">
+        <div class="container">
+            <div class="hero-grid">
+                <div class="hero-left">
+                    <div class="badge">
+                        <span>⚡</span> Personal Development Platform
+                    </div>
+                    <h1 class="hero-title">
+                        Understand <br>
+                        yourself. <br>
+                        <span class="gradient-text">Grow better.</span>
+                    </h1>
+                    <p class="hero-desc">
+                        SkillUp helps you explore and assess essential skills within yourself, your close relationships, and social life through interactive daily scenarios.
+                    </p>
+                    <a href="2.html" class="btn-primary">
+                        Explore Skills <span class="arrow">→</span>
+                    </a>
+                </div>
+
+                <div class="hero-right">
+                    <a href="2.html" class="circle-card">
+                        <div class="circle-wrapper">
+                            <div class="circle-inner">
+                                <h3>15 Skills</h3>
+                                <p>3 areas of growth</p>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="container footer-inner">
+            <div class="footer-brand">
+                <div class="logo-icon logo-icon-sm">S</div>
+                <span>© 2026 SkillUp Platform. All rights reserved.</span>
+            </div>
+            <div class="footer-links">
+                <a href="#" class="footer-link">Privacy Policy</a>
+                <a href="#" class="footer-link">Terms of Service</a>
+                <a href="#" class="footer-link">Contact Us</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- SLIDING NAV PILL SCRIPT -->
+    <script>
+        const nav = document.getElementById('mainNav');
+        const pill = document.getElementById('navPill');
+        const links = nav.querySelectorAll('.nav-link');
+        const activeLink = nav.querySelector('.nav-link.active');
+
+        function movePillTo(element, animate = true) {
+            if (!element || !pill) return;
+            const navRect = nav.getBoundingClientRect();
+            const rect = element.getBoundingClientRect();
+
+            if (!animate) {
+                pill.style.transition = 'none';
+            } else {
+                pill.style.transition = 'transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), width 0.45s cubic-bezier(0.16, 1, 0.3, 1)';
+            }
+
+            pill.style.width = `${rect.width}px`;
+            pill.style.transform = `translateX(${rect.left - navRect.left}px)`;
+
+            if (!animate) {
+                pill.offsetHeight; // Force reflow
+            }
+        }
+
+        // Đặt vị trí ngay lập tức khi trang load xong
+        const initPill = () => movePillTo(activeLink, false);
+        window.addEventListener('DOMContentLoaded', initPill);
+        window.addEventListener('load', initPill);
+        window.addEventListener('resize', initPill);
+
+        // Hiệu ứng trượt mượt khi lướt chuột qua lại
+        links.forEach(link => {
+            link.addEventListener('mouseenter', () => movePillTo(link, true));
+        });
+
+        nav.addEventListener('mouseleave', () => movePillTo(activeLink, true));
+    </script>
+</body>
+</html>

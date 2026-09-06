@@ -1,0 +1,1584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkillUp - Strengths &amp; Weaknesses</title>
+    <!-- Google Inter Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-dark: #05070f;
+            --glass-bg: rgba(15, 22, 41, 0.65);
+            --glass-card: rgba(255, 255, 255, 0.03);
+            --glass-card-hover: rgba(255, 255, 255, 0.07);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --glass-border-light: rgba(255, 255, 255, 0.25);
+
+            --accent-purple: #6366f1;
+            --accent-indigo: #818cf8;
+            --accent-cyan: #38bdf8;
+            --accent-pink: #ec4899;
+
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --text-dim: #64748b;
+
+            --correct-bg: rgba(34, 197, 94, 0.15);
+            --correct-border: #22c55e;
+            --incorrect-bg: rgba(239, 68, 68, 0.15);
+            --incorrect-border: #ef4444;
+
+            --ease-smooth: cubic-bezier(0.16, 1, 0.3, 1);
+            --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            background-image:
+                radial-gradient(circle at 50% 0%, rgba(99, 102, 241, 0.15), transparent 70%),
+                radial-gradient(circle at 80% 80%, rgba(56, 189, 248, 0.1), transparent 50%);
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 2.5rem 1rem 0 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Ambient Glow Blobs - Slow Floating */
+        .ambient-glow {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(120px);
+            z-index: -1;
+            pointer-events: none;
+            opacity: 0.5;
+            will-change: transform;
+        }
+        .glow-1 {
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.8) 0%, rgba(99, 102, 241, 0) 70%);
+            top: -150px;
+            left: -150px;
+            animation: floatGlow1 22s infinite alternate ease-in-out;
+        }
+        .glow-2 {
+            width: 550px;
+            height: 550px;
+            background: radial-gradient(circle, rgba(6, 182, 212, 0.7) 0%, rgba(6, 182, 212, 0) 70%);
+            bottom: -200px;
+            right: -150px;
+            animation: floatGlow2 26s infinite alternate ease-in-out;
+        }
+        .glow-3 {
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(236, 72, 153, 0.4) 0%, rgba(236, 72, 153, 0) 70%);
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: floatGlow3 18s infinite alternate ease-in-out;
+        }
+
+        @keyframes floatGlow1 {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(80px, 60px) scale(1.2); }
+        }
+        @keyframes floatGlow2 {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(-70px, -50px) scale(1.15); }
+        }
+        @keyframes floatGlow3 {
+            0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0.2; }
+            100% { transform: translate(-40%, -60%) scale(1.2); opacity: 0.5; }
+        }
+
+        .container {
+            max-width: 880px;
+            width: 100%;
+            z-index: 1;
+            flex: 1;
+        }
+
+        /* Back Link */
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            color: #ffffff;
+            text-decoration: none;
+            margin-bottom: 2rem;
+            font-size: 0.92rem;
+            font-weight: 600;
+            padding: 0.65rem 1.4rem;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(56, 189, 248, 0.2));
+            border: 1px solid rgba(129, 140, 248, 0.4);
+            border-radius: 30px;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            transition: all 0.5s var(--ease-smooth);
+            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        .back-link::after {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
+            transition: left 0.7s var(--ease-smooth);
+        }
+        .back-link:hover::after {
+            left: 100%;
+        }
+        .back-link:hover {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.45), rgba(56, 189, 248, 0.45));
+            border-color: rgba(255, 255, 255, 0.7);
+            transform: translateX(-6px) scale(1.02);
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.5);
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+            animation: fadeInDown 0.8s var(--ease-smooth);
+        }
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .header-badge {
+            display: inline-block;
+            padding: 0.4rem 1.1rem;
+            font-size: 0.78rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: #e0e7ff;
+            background: rgba(99, 102, 241, 0.2);
+            border: 1px solid rgba(129, 140, 248, 0.4);
+            border-radius: 30px;
+            margin-bottom: 1rem;
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.3);
+        }
+
+        .brand-title {
+            display: inline-block;
+            font-size: 2.8rem;
+            font-weight: 900;
+            letter-spacing: -0.03em;
+            margin-bottom: 0.6rem;
+            background: linear-gradient(135deg, #ffffff 20%, #c7d2fe 60%, #38bdf8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            cursor: pointer;
+            transition: transform 0.4s var(--ease-bounce), filter 0.4s ease;
+            position: relative;
+        }
+        .brand-title:hover {
+            transform: scale(1.03);
+            filter: drop-shadow(0 0 15px rgba(99, 102, 241, 0.6));
+        }
+
+        .header p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            font-weight: 400;
+        }
+
+        /* TAB NAVIGATION SLIDER */
+        .tab-navigation {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2.2rem;
+            transition: all 0.7s var(--ease-smooth);
+        }
+
+        .tab-btn {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2.2rem 1.5rem;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            color: var(--text-muted);
+            cursor: pointer;
+            backdrop-filter: blur(30px) saturate(180%);
+            -webkit-backdrop-filter: blur(30px) saturate(180%);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+            transition: all 0.5s var(--ease-smooth);
+            text-align: center;
+            gap: 0.9rem;
+            overflow: hidden;
+        }
+
+        .tab-btn::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
+            transition: left 0.8s var(--ease-smooth);
+        }
+        .tab-btn:hover::before {
+            left: 100%;
+        }
+
+        .tab-btn svg {
+            width: 40px;
+            height: 40px;
+            transition: all 0.5s var(--ease-bounce);
+            color: var(--accent-indigo);
+            filter: drop-shadow(0 0 8px rgba(129, 140, 248, 0.4));
+        }
+
+        .tab-btn-text {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        .tab-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #ffffff;
+            transition: color 0.4s ease;
+        }
+
+        .tab-desc {
+            font-size: 0.88rem;
+            color: var(--text-muted);
+            font-weight: 400;
+            max-width: 280px;
+            transition: all 0.4s var(--ease-smooth);
+            opacity: 1;
+            max-height: 60px;
+        }
+
+        .tab-btn:hover {
+            transform: translateY(-8px) scale(1.02);
+            border-color: rgba(129, 140, 248, 0.5);
+            background: rgba(30, 41, 67, 0.7);
+            box-shadow: 0 20px 45px rgba(99, 102, 241, 0.35), 0 0 20px rgba(56, 189, 248, 0.2);
+        }
+
+        .tab-btn:hover svg {
+            transform: scale(1.2) rotate(-5deg);
+            color: var(--accent-cyan);
+            filter: drop-shadow(0 0 12px rgba(56, 189, 248, 0.8));
+        }
+
+        .tab-navigation.shrunk {
+            display: flex;
+            background: rgba(10, 15, 30, 0.8);
+            border: 1px solid var(--glass-border-light);
+            padding: 8px;
+            border-radius: 20px;
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
+            gap: 8px;
+        }
+
+        .tab-navigation.shrunk .tab-btn {
+            flex: 1;
+            flex-direction: row;
+            padding: 1rem 1.4rem;
+            border-radius: 14px;
+            background: transparent;
+            border: none;
+            box-shadow: none;
+            gap: 0.7rem;
+        }
+
+        .tab-navigation.shrunk .tab-btn svg {
+            width: 22px;
+            height: 22px;
+        }
+
+        .tab-navigation.shrunk .tab-btn-text {
+            flex-direction: row;
+        }
+
+        .tab-navigation.shrunk .tab-title {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .tab-navigation.shrunk .tab-desc {
+            opacity: 0;
+            max-height: 0;
+            display: none;
+        }
+
+        .tab-navigation.shrunk .tab-btn:hover:not(.active) {
+            transform: scale(1.02);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .tab-navigation.shrunk .tab-btn.active {
+            color: #ffffff;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.9), rgba(79, 70, 229, 0.95));
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.4);
+        }
+
+        .tab-content {
+            display: none;
+            opacity: 0;
+            transform: translateY(25px) scale(0.98);
+            transition: opacity 0.5s var(--ease-smooth), transform 0.5s var(--ease-smooth);
+            will-change: transform, opacity;
+        }
+
+        .tab-content.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        .glass-panel {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            padding: 2.5rem;
+            backdrop-filter: blur(35px) saturate(180%);
+            -webkit-backdrop-filter: blur(35px) saturate(180%);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.15);
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            letter-spacing: -0.01em;
+        }
+        .section-title span {
+            font-size: 1.5rem;
+            filter: drop-shadow(0 0 8px rgba(255,255,255,0.4));
+        }
+
+        .knowledge-def {
+            font-size: 1.08rem;
+            line-height: 1.75;
+            color: #e2e8f0;
+            background: rgba(255, 255, 255, 0.025);
+            border: 1px solid var(--glass-border);
+            border-left: 4px solid var(--accent-indigo);
+            padding: 1.5rem;
+            border-radius: 18px;
+            margin-bottom: 2.2rem;
+            backdrop-filter: blur(10px);
+            box-shadow: inset 0 0 20px rgba(99, 102, 241, 0.05);
+            transition: all 0.4s var(--ease-smooth);
+        }
+        .knowledge-def:hover {
+            border-left-color: var(--accent-cyan);
+            background: rgba(255, 255, 255, 0.04);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .pillars-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 1.4rem;
+            margin-bottom: 2.2rem;
+        }
+
+        .pillar-card {
+            background: var(--glass-card);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 1.6rem;
+            transition: all 0.5s var(--ease-smooth);
+            position: relative;
+            overflow: hidden;
+        }
+        .pillar-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-purple), var(--accent-cyan), var(--accent-pink));
+            opacity: 0;
+            transition: opacity 0.4s var(--ease-smooth);
+        }
+        .pillar-card:hover {
+            background: var(--glass-card-hover);
+            border-color: var(--glass-border-light);
+            transform: translateY(-6px) scale(1.01);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3), 0 0 20px rgba(99, 102, 241, 0.15);
+        }
+        .pillar-card:hover::before {
+            opacity: 1;
+        }
+        .pillar-card h3 {
+            color: #c7d2fe;
+            margin-bottom: 0.7rem;
+            font-size: 1.15rem;
+            font-weight: 700;
+        }
+        .pillar-card p {
+            color: var(--text-muted);
+            font-size: 0.96rem;
+            line-height: 1.65;
+        }
+
+        .practical-section {
+            margin-top: 2.2rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--glass-border);
+        }
+
+        .action-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+            margin-bottom: 2.2rem;
+        }
+
+        .action-item {
+            display: flex;
+            gap: 1.3rem;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 1.4rem;
+            align-items: flex-start;
+            transition: all 0.4s var(--ease-smooth);
+        }
+        .action-item:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(129, 140, 248, 0.4);
+            transform: translateX(6px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+        }
+        .action-icon {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.25), rgba(56, 189, 248, 0.25));
+            width: 52px;
+            height: 52px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 16px;
+            flex-shrink: 0;
+            border: 1px solid rgba(129, 140, 248, 0.3);
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.2);
+            transition: transform 0.4s var(--ease-bounce);
+        }
+        .action-item:hover .action-icon {
+            transform: scale(1.15) rotate(5deg);
+        }
+        .action-content h4 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #f1f5f9;
+            margin-bottom: 0.4rem;
+        }
+        .action-content p {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        .pro-tip {
+            background: linear-gradient(135deg, rgba(234, 179, 8, 0.15), rgba(245, 158, 11, 0.06));
+            border: 1px solid rgba(245, 158, 11, 0.4);
+            border-radius: 20px;
+            padding: 1.4rem 1.6rem;
+            color: #fef08a;
+            font-size: 0.98rem;
+            line-height: 1.65;
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            box-shadow: 0 8px 25px rgba(245, 158, 11, 0.15);
+            transition: all 0.4s var(--ease-smooth);
+        }
+        .pro-tip:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(245, 158, 11, 0.25);
+        }
+        .pro-tip-icon {
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .quiz-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.4rem;
+            color: var(--text-muted);
+            font-size: 0.98rem;
+            font-weight: 700;
+        }
+
+        .score-badge {
+            background: rgba(99, 102, 241, 0.25);
+            color: #c7d2fe;
+            padding: 0.45rem 1.1rem;
+            border-radius: 30px;
+            border: 1px solid rgba(99, 102, 241, 0.4);
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.2);
+        }
+
+        #score {
+            display: inline-block;
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 2.2rem;
+            padding: 2px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple), var(--accent-pink));
+            border-radius: 10px;
+            transition: width 0.6s var(--ease-smooth);
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.8);
+        }
+
+        #quiz-container {
+            transition: opacity 0.4s var(--ease-smooth), transform 0.4s var(--ease-smooth);
+        }
+
+        .question-text {
+            font-size: 1.35rem;
+            font-weight: 800;
+            line-height: 1.55;
+            margin-bottom: 2rem;
+            color: #ffffff;
+            letter-spacing: -0.01em;
+        }
+
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .option-btn {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 1.2rem 1.5rem;
+            color: var(--text-main);
+            font-size: 1.02rem;
+            font-weight: 500;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.35s var(--ease-smooth);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            border-color: rgba(129, 140, 248, 0.5);
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateX(8px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+
+        .option-btn:disabled {
+            cursor: default;
+        }
+
+        .option-btn.correct {
+            background: var(--correct-bg) !important;
+            border-color: var(--correct-border) !important;
+            color: #4ade80 !important;
+            box-shadow: 0 0 20px rgba(34, 197, 94, 0.3);
+            animation: bounceSelect 0.4s var(--ease-bounce);
+        }
+
+        .option-btn.incorrect {
+            background: var(--incorrect-bg) !important;
+            border-color: var(--incorrect-border) !important;
+            color: #f87171 !important;
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+            animation: shake 0.4s ease-in-out;
+        }
+
+        @keyframes bounceSelect {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-6px); }
+            40%, 80% { transform: translateX(6px); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(14px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes scorePop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.35); color: #4ade80; }
+            100% { transform: scale(1); }
+        }
+
+        .explanation-box {
+            display: none;
+            padding: 1.4rem 1.6rem;
+            border-radius: 16px;
+            font-size: 1rem;
+            line-height: 1.65;
+            margin-bottom: 2rem;
+            animation: fadeInSlide 0.5s var(--ease-smooth);
+        }
+
+        @keyframes fadeInSlide {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .explanation-box.show-correct {
+            background: var(--correct-bg);
+            border: 1px solid var(--correct-border);
+            color: #bbf7d0;
+        }
+
+        .explanation-box.show-incorrect {
+            background: var(--incorrect-bg);
+            border: 1px solid var(--incorrect-border);
+            color: #fecaca;
+        }
+
+        .action-btn {
+            background: linear-gradient(135deg, var(--accent-purple), #4f46e5);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 1rem 2.4rem;
+            border-radius: 14px;
+            font-size: 1.05rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: none;
+            margin-left: auto;
+            transition: all 0.4s var(--ease-smooth);
+            box-shadow: 0 10px 25px rgba(99, 102, 241, 0.4);
+        }
+
+        .action-btn:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 15px 35px rgba(99, 102, 241, 0.6);
+        }
+
+        .result-screen {
+            text-align: center;
+            display: none;
+            padding: 2.5rem 1rem;
+            transition: opacity 0.5s var(--ease-smooth), transform 0.5s var(--ease-smooth);
+        }
+
+        .result-title {
+            font-size: 2.2rem;
+            font-weight: 900;
+            color: #ffffff;
+            margin-bottom: 0.6rem;
+        }
+
+        .result-score {
+            font-size: 4.5rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #a5b4fc, #6366f1, #38bdf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 1rem 0;
+            letter-spacing: -0.04em;
+            filter: drop-shadow(0 10px 20px rgba(99, 102, 241, 0.3));
+        }
+
+        .star-rating {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            letter-spacing: 0.3rem;
+            filter: drop-shadow(0 0 10px rgba(250, 204, 21, 0.5));
+        }
+
+        .feedback-text {
+            color: var(--text-muted);
+            font-size: 1.15rem;
+            margin-bottom: 2.5rem;
+            max-width: 520px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.65;
+        }
+
+        .restart-btn {
+            background: linear-gradient(135deg, var(--accent-purple), #4f46e5);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 1.1rem 3rem;
+            border-radius: 16px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.4s var(--ease-smooth);
+            box-shadow: 0 12px 30px rgba(99, 102, 241, 0.5);
+        }
+
+        .restart-btn:hover {
+            transform: translateY(-3px) scale(1.03);
+            box-shadow: 0 18px 40px rgba(99, 102, 241, 0.7);
+        }
+
+        .site-footer {
+            width: 100vw;
+            background: rgba(5, 7, 15, 0.85);
+            border-top: 1px solid var(--glass-border);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 1.8rem 1rem;
+            margin-top: 4rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        .footer-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1.2rem;
+        }
+
+        .footer-left {
+            display: flex;
+            align-items: center;
+            gap: 0.9rem;
+            cursor: pointer;
+        }
+
+        .footer-badge-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #a855f7, #6366f1);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-weight: 900;
+            font-size: 1rem;
+            box-shadow: 0 0 15px rgba(168, 85, 247, 0.5);
+            transition: transform 0.3s var(--ease-bounce);
+        }
+
+        .footer-left:hover .footer-badge-icon {
+            transform: scale(1.15) rotate(-5deg);
+        }
+
+        .copyright-text {
+            color: var(--text-muted);
+            font-size: 0.92rem;
+            font-weight: 500;
+        }
+
+        .footer-links {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .footer-link {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.92rem;
+            font-weight: 500;
+            transition: color 0.3s ease, transform 0.3s ease;
+        }
+
+        .footer-link:hover {
+            color: var(--accent-cyan);
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 680px) {
+            body { padding: 1.5rem 0.8rem 0 0.8rem; }
+            .glass-panel { padding: 1.6rem; border-radius: 22px; }
+            .brand-title { font-size: 2.2rem; }
+            .result-score { font-size: 3.5rem; }
+            .action-item { flex-direction: column; }
+            .tab-navigation { grid-template-columns: 1fr; }
+            .footer-inner { flex-direction: column; text-align: center; justify-content: center; }
+            .footer-links { gap: 1.2rem; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="ambient-glow glow-1"></div>
+<div class="ambient-glow glow-2"></div>
+<div class="ambient-glow glow-3"></div>
+
+<div class="container">
+    <a href="01.html" class="back-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+        Back to Oneself
+    </a>
+
+    <div class="header">
+        <span class="header-badge">Core Skill #03</span>
+        <div>
+            <h1 id="skill-title" class="brand-title" onclick="resetToHome()" title="Click to reset view">Strengths &amp; Weaknesses</h1>
+        </div>
+        <p id="skill-subtitle">Accurately assess your strengths and weaknesses to grow</p>
+    </div>
+
+    <div class="tab-navigation" id="tab-nav">
+        <button class="tab-btn" onclick="switchTab('knowledge-tab')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
+            <div class="tab-btn-text">
+                <span class="tab-title">Essential Knowledge</span>
+                <span class="tab-desc">Explore theories, pillars &amp; practical frameworks</span>
+            </div>
+        </button>
+        <button class="tab-btn" onclick="switchTab('quiz-tab')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+            <div class="tab-btn-text">
+                <span class="tab-title">Quiz Assessment</span>
+                <span class="tab-desc">Test your understanding with 10 random questions</span>
+            </div>
+        </button>
+    </div>
+
+    <div id="knowledge-tab" class="tab-content">
+        <div class="glass-panel">
+            <div class="section-title">
+                <span>⚖️</span> The Essence of Strengths &amp; Weaknesses
+            </div>
+            <div id="knowledge-def" class="knowledge-def">Loading theory...</div>
+
+            <div class="section-title" style="margin-top: 2.2rem;">
+                <span>🏛️</span> Core Pillars
+            </div>
+            <div id="pillars-grid" class="pillars-grid"></div>
+
+            <div class="practical-section">
+                <div class="section-title">
+                    <span>🚀</span> Practical Action Framework
+                </div>
+                <div class="action-list">
+                    <div class="action-item">
+                        <div class="action-icon">📋</div>
+                        <div class="action-content">
+                            <h4>Skills Inventory</h4>
+                            <p>List your top strengths and weaknesses honestly, then ask a trusted colleague or friend to add anything you might be missing.</p>
+                        </div>
+                    </div>
+
+                    <div class="action-item">
+                        <div class="action-icon">🎯</div>
+                        <div class="action-content">
+                            <h4>One Weak Skill at a Time</h4>
+                            <p>Pick a single weak area and set a small, specific practice goal for it rather than trying to fix everything at once.</p>
+                        </div>
+                    </div>
+
+                    <div class="action-item">
+                        <div class="action-icon">🔄</div>
+                        <div class="action-content">
+                            <h4>Feedback Loop</h4>
+                            <p>After finishing any task, ask someone directly: "What's one thing I could have done better here?"</p>
+                        </div>
+                    </div>
+
+                    <div class="action-item">
+                        <div class="action-icon">📈</div>
+                        <div class="action-content">
+                            <h4>Progress Log</h4>
+                            <p>Track how a weak skill performs over time so you have real evidence of improvement, not just a feeling.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pro-tip">
+                    <span class="pro-tip-icon">💡</span>
+                    <div>
+                        <strong>Pro-Tip:</strong> A weakness you can name and are actively working on is far less limiting than a weakness you're pretending not to have.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="quiz-tab" class="tab-content">
+        <div class="glass-panel">
+            <div class="quiz-header">
+                <span>Question <span id="current-question">1</span>/<span id="total-questions">10</span></span>
+                <span class="score-badge">Score: <span id="score">0</span></span>
+            </div>
+
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+
+            <div id="quiz-container">
+                <div class="question-text" id="question-text">Loading question...</div>
+                <div class="options-list" id="options-list"></div>
+                <div class="explanation-box" id="explanation-box"></div>
+                <button class="action-btn" id="next-btn" onclick="nextQuestion()">Continue</button>
+            </div>
+
+            <div class="result-screen" id="result-screen">
+                <h2 class="result-title">Assessment Complete!</h2>
+                <div class="result-score" id="final-score">0/10</div>
+                <div class="star-rating" id="star-rating">⭐⭐⭐</div>
+                <p class="feedback-text" id="feedback-text">Great job on completing the assessment!</p>
+                <button class="restart-btn" onclick="resetQuiz()">Retake Quiz</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer class="site-footer">
+    <div class="footer-inner">
+        <div class="footer-left" onclick="resetToHome()">
+            <div class="footer-badge-icon">S</div>
+            <span class="copyright-text">&copy; 2026 SkillUp. All rights reserved.</span>
+        </div>
+        <div class="footer-links">
+            <a href="#" class="footer-link">Privacy Policy</a>
+            <a href="#" class="footer-link">Terms of Service</a>
+            <a href="#" class="footer-link">Support</a>
+        </div>
+    </div>
+</footer>
+
+<script>
+    /* =========================================================
+       TAB SWITCHING
+       ========================================================= */
+    function switchTab(tabId) {
+        document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+
+        const nav = document.getElementById('tab-nav');
+        nav.classList.add('shrunk');
+
+        const activeContent = document.getElementById(tabId);
+        if (activeContent) activeContent.classList.add('active');
+
+        const activeBtn = document.querySelector(`[onclick="switchTab('${tabId}')"]`);
+        if (activeBtn) activeBtn.classList.add('active');
+
+        if (tabId === 'quiz-tab' && quizState.questions.length === 0) {
+            startQuiz();
+        }
+    }
+
+    function resetToHome() {
+        const nav = document.getElementById('tab-nav');
+        nav.classList.remove('shrunk');
+        document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    }
+
+    /* =========================================================
+       CONTENT DATA
+       ========================================================= */
+    const selfDiscoveryContent = {
+        definition: "Recognizing your strengths and weaknesses means building an honest, current picture of what you do well and where you still have room to grow \u2014 then using that picture to focus your effort, ask for the right kind of help, and keep improving instead of guessing at your own ability.",
+        pillars: [
+            {
+                title: "Honest Self-Assessment",
+                text: "Seeing your abilities as they actually are right now, not as you wish they were or fear they might be."
+            },
+            {
+                title: "Growth Mindset",
+                text: "Treating a weakness as a skill still in progress rather than a fixed limitation that defines you."
+            },
+            {
+                title: "Using Feedback Well",
+                text: "Evaluating what others tell you fairly, separating the useful signal from the noise, regardless of who delivers it."
+            },
+            {
+                title: "Deliberate Practice",
+                text: "Turning a known weak spot into a specific, trackable goal instead of a vague, ongoing worry."
+            }
+        ]
+    };
+
+    /* =========================================================
+       QUIZ QUESTION BANK
+       Each question has 4 options, each with its OWN explanation.
+       correctIndex marks the correct option (index into "options").
+       ========================================================= */
+    const quizBank = [
+        {
+            question: "What is a \"strength\" in the context of self-assessment?",
+            options: [
+                { text: "A skill or quality that you naturally do well or enjoy using", explanation: "Correct. A strength is something you do well and can rely on to add value." },
+                { text: "Something that impresses other people", explanation: "Impressing others is a side effect, not the definition of a strength." },
+                { text: "A hobby you spend a lot of time on", explanation: "A hobby is not automatically a strength unless you're actually skilled at it." },
+                { text: "A trait everyone else lacks", explanation: "A strength doesn't require that no one else has it." },
+            ],
+            correctIndex: 0
+        },
+        {
+            question: "What is a \"weakness\"?",
+            options: [
+                { text: "Something you are bad at and can never improve", explanation: "Weaknesses can usually be improved with effort and practice." },
+                { text: "An area where your skill or performance is currently limited", explanation: "Correct. A weakness is simply a current gap in skill or performance, not a permanent label." },
+                { text: "A personality flaw that defines who you are", explanation: "A weakness describes ability, not your worth as a person." },
+                { text: "Something other people dislike about you", explanation: "Other people's opinions don't define your actual weaknesses." },
+            ],
+            correctIndex: 1
+        },
+        {
+            question: "Why is it important to know both your strengths and weaknesses?",
+            options: [
+                { text: "So you can hide your weaknesses from everyone", explanation: "Hiding weaknesses prevents you from improving them." },
+                { text: "So you can make more informed decisions about where to focus your effort", explanation: "Correct. Knowing both helps you decide what to leverage and what to develop." },
+                { text: "So you can prove you are better than others", explanation: "Self-assessment is not about ranking yourself against others." },
+                { text: "So you never have to ask for help", explanation: "Knowing your weaknesses often means recognizing when you need help." },
+            ],
+            correctIndex: 1
+        },
+        {
+            question: "What is a \"growth mindset\"?",
+            options: [
+                { text: "Believing your abilities are fixed at birth", explanation: "This describes a fixed mindset, the opposite of growth mindset." },
+                { text: "Believing abilities can be developed through effort and practice", explanation: "Correct. A growth mindset holds that skills and intelligence can improve with effort." },
+                { text: "Believing only talented people succeed", explanation: "This ignores the role of effort and practice in developing skill." },
+                { text: "Avoiding challenges that might expose weaknesses", explanation: "Avoiding challenges limits growth rather than supporting it." },
+            ],
+            correctIndex: 1
+        },
+        {
+            question: "What does \"using feedback effectively\" mean?",
+            options: [
+                { text: "Accepting every piece of feedback without question", explanation: "Not all feedback is equally accurate or relevant; it still needs evaluation." },
+                { text: "Ignoring feedback that feels uncomfortable", explanation: "Uncomfortable feedback is often the most useful for growth." },
+                { text: "Evaluating feedback honestly and applying what is useful", explanation: "Correct. Effective use of feedback means weighing it fairly and acting on what helps." },
+                { text: "Only listening to feedback from people you like", explanation: "Useful feedback can come from people you don't personally like." },
+            ],
+            correctIndex: 2
+        },
+        {
+            question: "What is the key difference between a weakness and a single mistake?",
+            options: [
+                { text: "There is no difference", explanation: "The two describe different things — one is a pattern, one is an event." },
+                { text: "A weakness is a recurring pattern, while a mistake can be a one-time event", explanation: "Correct. A weakness tends to show up repeatedly, while a mistake can happen once." },
+                { text: "A mistake is always more serious than a weakness", explanation: "Severity depends on context, not on which category it falls into." },
+                { text: "A weakness only applies to work settings", explanation: "Weaknesses can show up in any area of life, not only work." },
+            ],
+            correctIndex: 1
+        },
+        {
+            question: "What is the main purpose of a self-assessment?",
+            options: [
+                { text: "To rank yourself against everyone you know", explanation: "Comparison with others is not the goal of self-assessment." },
+                { text: "To gain an honest, current picture of your strengths and weaknesses", explanation: "Correct. Self-assessment is meant to give you an honest, personal snapshot to act on." },
+                { text: "To find reasons to feel bad about yourself", explanation: "Self-assessment should inform growth, not fuel self-criticism." },
+                { text: "To prove to others that you are skilled", explanation: "The audience for a self-assessment is primarily yourself." },
+            ],
+            correctIndex: 1
+        },
+        {
+            question: "A colleague tells you your presentation had a weak structure. What is the best response?",
+            options: [
+                { text: "Get defensive and explain why they are wrong", explanation: "Defensiveness blocks you from learning from the feedback." },
+                { text: "Ignore the comment completely", explanation: "Ignoring feedback wastes a chance to improve." },
+                { text: "Thank them and consider how to structure future presentations better", explanation: "Correct. Accepting and applying useful feedback is how weaknesses get addressed." },
+                { text: "Avoid giving presentations from now on", explanation: "Avoidance prevents you from ever developing the skill." },
+            ],
+            correctIndex: 2
+        },
+        {
+            question: "You are strong at public speaking but weak at spreadsheets, and your job requires both. What is the best strategy?",
+            options: [
+                { text: "Only take on tasks that involve public speaking", explanation: "Avoiding the weak area entirely limits your overall effectiveness." },
+                { text: "Complain that spreadsheets are unnecessary", explanation: "Dismissing a needed skill doesn't make the requirement go away." },
+                { text: "Keep using your public speaking strength while actively building spreadsheet skills", explanation: "Correct. Leveraging strengths while developing weak areas is a balanced approach." },
+                { text: "Ask a coworker to always do your spreadsheet work for you", explanation: "Permanently offloading the task doesn't help you improve." },
+            ],
+            correctIndex: 2
+        },
+        {
+            question: "Your manager assigns you a task that touches on a skill you know is weak. What should you do first?",
+            options: [
+                { text: "Refuse the task immediately", explanation: "Refusing outright removes a chance to grow and can damage trust." },
+                { text: "Assume you will fail and give minimal effort", explanation: "A defeatist attitude reduces your actual chances of doing well." },
+                { text: "Acknowledge the challenge and ask clarifying questions or for support where needed", explanation: "Correct. Being upfront and seeking support turns a weak spot into a learning opportunity." },
+                { text: "Pretend you are already an expert", explanation: "Pretending expertise you don't have can lead to bigger problems later." },
+            ],
+            correctIndex: 2
+        },
+        {
+            question: "A friend praises your creativity, but you don't really believe it about yourself. What is the most useful next step?",
+            options: [
+                { text: "Dismiss the compliment as politeness", explanation: "Dismissing feedback prevents you from recognizing a possible blind strength." },
+                { text: "Reflect on specific examples where your creativity actually showed", explanation: "Correct. Checking the claim against real examples helps you assess it honestly." },
+                { text: "Ask them to stop complimenting you", explanation: "Shutting down feedback removes useful outside perspective." },
+                { text: "Assume they want something from you", explanation: "Assuming a hidden motive isn't a reasonable default response." },
+            ],
+            correctIndex: 1
+        },
+        {
+            question: "During a team project, you notice you tend to dominate discussions, which is a known weakness of yours. What is the best fix?",
+            options: [
+                { text: "Keep talking as usual since your ideas are good", explanation: "Continuing the pattern doesn't address the weakness." },
+                { text: "Stop contributing entirely", explanation: "Withdrawing entirely removes your valuable input, which isn't the goal." },
+                { text: "Deliberately pause and invite others to share their views", explanation: "Correct. Making space for others directly addresses the dominating pattern." },
+                { text: "Ask someone else to run every meeting instead of you", explanation: "Handing off responsibility avoids the issue rather than improving it." },
+            ],
+            correctIndex: 2
+        },
+        {
+            question: "You receive blunt criticism from someone you personally dislike. What is the wisest approach?",
+            options: [
+                { text: "Reject the feedback purely because of who said it", explanation: "The accuracy of feedback doesn't depend on your feelings about the source." },
+                { text: "Evaluate the content of the feedback separately from your feelings about the person", explanation: "Correct. Separating the message from the messenger lets you judge it fairly." },
+                { text: "Assume they are trying to hurt you", explanation: "Assuming bad intent isn't a reliable way to evaluate feedback." },
+                { text: "Ask other people to confront them", explanation: "This escalates the situation rather than addressing the feedback itself." },
+            ],
+            correctIndex: 1
+        },
+        {
+            question: "You keep struggling with the same type of task despite several attempts. What does a growth mindset suggest you do?",
+            options: [
+                { text: "Conclude you simply aren't capable and stop trying", explanation: "This reflects a fixed mindset rather than a growth-oriented one." },
+                { text: "Try a different approach or seek guidance, and treat it as a skill still in progress", explanation: "Correct. A growth mindset treats repeated struggle as a signal to adjust approach, not to give up." },
+                { text: "Blame the task for being poorly designed", explanation: "Blaming external factors avoids addressing your own skill gap." },
+                { text: "Avoid similar tasks permanently", explanation: "Avoidance prevents the skill from ever developing." },
+            ],
+            correctIndex: 1
+        },
+        {
+            question: "You notice a coworker is much stronger than you in an area you value. What is the healthiest response?",
+            options: [
+                { text: "Feel that you are generally inferior to them", explanation: "One area of comparison doesn't define your overall worth or ability." },
+                { text: "Ignore the area completely since someone else is already good at it", explanation: "Someone else's skill doesn't remove the value of developing your own." },
+                { text: "Use their skill level as a benchmark to guide your own improvement", explanation: "Correct. Using others as a benchmark can provide useful, motivating direction." },
+                { text: "Try to make them look bad instead", explanation: "Undermining someone else doesn't build your own skill." },
+            ],
+            correctIndex: 2
+        },
+        {
+            question: "What is the most effective way to identify your strengths?",
+            options: [
+                { text: "Guess based on what sounds impressive", explanation: "Impressiveness doesn't necessarily match your actual abilities." },
+                { text: "Notice tasks that feel easy to you and where you consistently get good results", explanation: "Correct. Consistent ease and good results are strong signals of a genuine strength." },
+                { text: "Copy the strengths listed by a friend", explanation: "Someone else's strengths are not automatically yours." },
+                { text: "Assume you have the same strengths as your parents", explanation: "Strengths aren't guaranteed to be inherited or identical across family members." },
+            ],
+            correctIndex: 1
+        },
+        {
+            question: "What is a reliable method for identifying your weaknesses?",
+            options: [
+                { text: "Wait for someone to insult you", explanation: "Waiting for insults is neither reliable nor a healthy method." },
+                { text: "Track tasks where you consistently struggle or get corrected, and note any patterns", explanation: "Correct. Tracking recurring struggles or corrections reveals real patterns over time." },
+                { text: "Assume you have no weaknesses unless proven otherwise", explanation: "Everyone has some areas that need development." },
+                { text: "Only rely on your own opinion of yourself", explanation: "Self-opinion alone often misses blind spots that others can see." },
+            ],
+            correctIndex: 1
+        },
+        {
+            question: "What is a concrete way to turn a weakness into an improvement opportunity?",
+            options: [
+                { text: "Avoid the task associated with the weakness indefinitely", explanation: "Avoidance keeps the weakness from ever improving." },
+                { text: "Set a specific, small goal to practice the skill regularly", explanation: "Correct. Small, consistent practice is one of the most effective ways to build a skill." },
+                { text: "Wait until the weakness disappears on its own", explanation: "Weaknesses rarely improve without deliberate action." },
+                { text: "Complain about the weakness to others", explanation: "Complaining doesn't create any actual change." },
+            ],
+            correctIndex: 1
+        },
+        {
+            question: "Which action best reflects a growth mindset applied to skill development?",
+            options: [
+                { text: "Sticking only to tasks you already do well", explanation: "Sticking to comfort zones limits skill development." },
+                { text: "Treating a difficult new skill as a challenge to work through over time", explanation: "Correct. Viewing challenges as something to work through reflects a growth mindset." },
+                { text: "Giving up on a skill after one failed attempt", explanation: "Giving up after one attempt doesn't allow room for improvement." },
+                { text: "Assuming skill level is fixed once you reach adulthood", explanation: "Skills can continue developing well beyond any particular age." },
+            ],
+            correctIndex: 1
+        },
+        {
+            question: "What is the best way to use feedback constructively?",
+            options: [
+                { text: "Write it down, look for patterns across multiple sources, and decide what to act on", explanation: "Correct. Recording and pattern-checking feedback helps separate signal from noise." },
+                { text: "Respond immediately with a defense of your work", explanation: "Defending immediately can stop you from actually hearing the feedback." },
+                { text: "Forget about it once the conversation ends", explanation: "Forgetting feedback wastes the opportunity to improve." },
+                { text: "Only apply feedback that requires no effort", explanation: "Useful improvement often requires some real effort." },
+            ],
+            correctIndex: 0
+        },
+        {
+            question: "What is a smart way to leverage a known strength at work?",
+            options: [
+                { text: "Use it only when it benefits you personally", explanation: "Leveraging a strength works best when it also benefits the shared goal." },
+                { text: "Volunteer it for tasks or projects where it can add the most value to the team", explanation: "Correct. Applying a strength where it's most useful maximizes its value." },
+                { text: "Mention it often in conversation without applying it", explanation: "Talking about a strength isn't the same as actually applying it." },
+                { text: "Hide it so others don't feel threatened", explanation: "Hiding a genuine strength limits both your growth and your contribution." },
+            ],
+            correctIndex: 1
+        },
+        {
+            question: "What is a practical way to track your skill development over time?",
+            options: [
+                { text: "Rely on memory alone to judge your progress", explanation: "Memory alone is often unreliable and can be biased." },
+                { text: "Keep periodic notes or records comparing your performance at different points in time", explanation: "Correct. Periodic notes give you concrete evidence of how you're actually progressing." },
+                { text: "Only judge progress by comparing yourself to experts", explanation: "Comparing only to experts can obscure your own real progress." },
+                { text: "Assume progress is happening without checking", explanation: "Assuming progress without checking can hide stalled growth." },
+            ],
+            correctIndex: 1
+        },
+        {
+            question: "Which statement shows a healthy relationship with your own weaknesses?",
+            options: [
+                { text: "\"I have no weaknesses worth mentioning.\"", explanation: "Denying weaknesses blocks honest self-assessment." },
+                { text: "\"My weaknesses are permanent and can't be changed.\"", explanation: "Most weaknesses can improve with deliberate effort." },
+                { text: "\"I can name my weaknesses and I'm working on the ones that matter most.\"", explanation: "Correct. This reflects honest awareness paired with active effort to improve." },
+                { text: "\"I'd rather not think about my weaknesses at all.\"", explanation: "Avoiding the topic prevents any real progress." },
+            ],
+            correctIndex: 2
+        },
+        {
+            question: "Which mindset best supports long-term growth?",
+            options: [
+                { text: "\"If I'm not good at something immediately, I never will be.\"", explanation: "This fixed view discourages any attempt to improve." },
+                { text: "\"Effort and practice can improve my abilities over time.\"", explanation: "Correct. This growth-oriented belief supports consistent effort and improvement." },
+                { text: "\"Talent is the only thing that matters.\"", explanation: "This ignores the role that effort and practice play in skill." },
+                { text: "\"Mistakes mean I should quit.\"", explanation: "Mistakes are often a normal part of the learning process." },
+            ],
+            correctIndex: 1
+        },
+        {
+            question: "Which self-reflection question is most useful for identifying a hidden strength?",
+            options: [
+                { text: "\"What do I do that feels effortless but produces good results?\"", explanation: "Correct. Ease combined with good outcomes is a strong signal of an underlying strength." },
+                { text: "\"What does everyone else think I should be good at?\"", explanation: "Other people's expectations don't necessarily match your actual strengths." },
+                { text: "\"What would impress people the most?\"", explanation: "Impressiveness doesn't reliably indicate genuine skill." },
+                { text: "\"What skill is currently trending?\"", explanation: "Trends reflect what's popular, not necessarily what you're actually good at." },
+            ],
+            correctIndex: 0
+        },
+        {
+            question: "Which statement reflects a fixed mindset rather than a growth mindset?",
+            options: [
+                { text: "\"I can get better at this with practice.\"", explanation: "This reflects belief that ability can develop, a growth mindset trait." },
+                { text: "\"This is hard right now, but I'll improve.\"", explanation: "This also reflects a growth-oriented outlook." },
+                { text: "\"I'm just not a 'numbers person,' so there's no point trying.\"", explanation: "Correct. Labeling ability as fixed and giving up reflects a fixed mindset." },
+                { text: "\"Feedback can help me improve.\"", explanation: "Valuing feedback is consistent with a growth mindset." },
+            ],
+            correctIndex: 2
+        },
+        {
+            question: "Which is the best indicator that you are actually improving a weakness?",
+            options: [
+                { text: "You feel more confident even though your results haven't changed", explanation: "Confidence without changed results isn't reliable evidence of improvement." },
+                { text: "You avoid the task less often and your results are gradually getting better", explanation: "Correct. Reduced avoidance and better results over time are concrete signs of progress." },
+                { text: "Other people stop mentioning it at all", explanation: "Silence from others isn't a dependable measure of actual improvement." },
+                { text: "You've stopped thinking about it", explanation: "Not thinking about something doesn't mean it has actually improved." },
+            ],
+            correctIndex: 1
+        },
+        {
+            question: "Why should you periodically reassess your strengths and weaknesses?",
+            options: [
+                { text: "Because they never actually change", explanation: "Strengths and weaknesses can shift as you gain experience and skills." },
+                { text: "Because skills, circumstances, and interests can shift over time", explanation: "Correct. Reassessing keeps your self-understanding accurate as you grow and change." },
+                { text: "Because it's required by other people", explanation: "The main value of reassessment is for your own benefit, not to satisfy others." },
+                { text: "Because only weaknesses need to be reassessed, not strengths", explanation: "Strengths can also shift and deserve periodic reassessment too." },
+            ],
+            correctIndex: 1
+        },
+        {
+            question: "Which behavior shows an over-reliance on strengths while ignoring weaknesses?",
+            options: [
+                { text: "Practicing a weak skill in low-stakes situations", explanation: "This is actually an example of addressing a weakness constructively." },
+                { text: "Refusing to work on a critical weak area because your strengths already get you by", explanation: "Correct. Coasting solely on strengths while avoiding critical weak areas limits long-term growth." },
+                { text: "Asking for feedback on an underdeveloped skill", explanation: "Seeking feedback is a healthy way to address a weakness." },
+                { text: "Setting a small goal to improve a weak area", explanation: "Goal-setting is a constructive step toward improvement, not avoidance." },
+            ],
+            correctIndex: 1
+        },
+        {
+            question: "What is the best overall purpose of doing a strengths-and-weaknesses self-assessment?",
+            options: [
+                { text: "To create a fixed label that defines you forever", explanation: "A self-assessment should be treated as a current snapshot, not a permanent label." },
+                { text: "To build an accurate, current picture that guides where to focus your growth", explanation: "Correct. The value of the assessment is in guiding meaningful, targeted growth." },
+                { text: "To have something to brag about to others", explanation: "Bragging isn't the intended purpose of honest self-assessment." },
+                { text: "To find proof that you are better than your peers", explanation: "Self-assessment isn't meant to be a comparison contest with others." },
+            ],
+            correctIndex: 1
+        },
+    ];
+
+    const QUESTIONS_PER_QUIZ = 10;
+
+    let quizState = {
+        questions: [],
+        currentIndex: 0,
+        score: 0,
+        answered: false
+    };
+
+    /* =========================================================
+       INIT
+       ========================================================= */
+    document.addEventListener('DOMContentLoaded', () => {
+        renderKnowledge();
+    });
+
+    /* =========================================================
+       KNOWLEDGE TAB RENDER
+       ========================================================= */
+    function renderKnowledge() {
+        const defEl = document.getElementById('knowledge-def');
+        defEl.style.opacity = 0;
+        defEl.textContent = selfDiscoveryContent.definition;
+        requestAnimationFrame(() => {
+            defEl.style.transition = 'opacity 0.6s ease';
+            defEl.style.opacity = 1;
+        });
+
+        const grid = document.getElementById('pillars-grid');
+        grid.innerHTML = selfDiscoveryContent.pillars.map((p, i) => `
+            <div class="pillar-card" style="animation: fadeInUp 0.5s var(--ease-smooth) ${i * 0.08}s backwards;">
+                <h3>${p.title}</h3>
+                <p>${p.text}</p>
+            </div>
+        `).join('');
+    }
+
+    /* =========================================================
+       QUIZ LOGIC
+       ========================================================= */
+    function shuffleArray(arr) {
+        const a = [...arr];
+        for (let i = a.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [a[i], a[j]] = [a[j], a[i]];
+        }
+        return a;
+    }
+
+    function startQuiz() {
+        const picked = shuffleArray(quizBank).slice(0, QUESTIONS_PER_QUIZ);
+
+        quizState.questions = picked.map(q => {
+            const optionsWithFlag = q.options.map((opt, i) => ({
+                text: opt.text,
+                explanation: opt.explanation,
+                isCorrect: i === q.correctIndex
+            }));
+            return {
+                question: q.question,
+                options: shuffleArray(optionsWithFlag)
+            };
+        });
+
+        quizState.currentIndex = 0;
+        quizState.score = 0;
+
+        document.getElementById('quiz-container').style.display = 'block';
+        document.getElementById('result-screen').style.display = 'none';
+        document.getElementById('total-questions').textContent = QUESTIONS_PER_QUIZ;
+        document.getElementById('score').textContent = 0;
+
+        renderQuestion();
+    }
+
+    function renderQuestion() {
+        const total = quizState.questions.length;
+        const idx = quizState.currentIndex;
+        const q = quizState.questions[idx];
+
+        const quizContainer = document.getElementById('quiz-container');
+        quizContainer.style.opacity = 0;
+        quizContainer.style.transform = 'translateY(10px)';
+
+        setTimeout(() => {
+            document.getElementById('current-question').textContent = idx + 1;
+            document.getElementById('progress-bar').style.width = `${(idx / total) * 100}%`;
+            document.getElementById('question-text').textContent = q.question;
+
+            const list = document.getElementById('options-list');
+            list.innerHTML = '';
+            q.options.forEach((opt, i) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.style.animation = `fadeInUp 0.4s var(--ease-smooth) ${i * 0.06}s backwards`;
+                btn.textContent = opt.text;
+                btn.onclick = () => selectOption(i);
+                list.appendChild(btn);
+            });
+
+            const explBox = document.getElementById('explanation-box');
+            explBox.className = 'explanation-box';
+            explBox.style.display = 'none';
+            explBox.innerHTML = '';
+
+            document.getElementById('next-btn').style.display = 'none';
+            quizState.answered = false;
+
+            requestAnimationFrame(() => {
+                quizContainer.style.opacity = 1;
+                quizContainer.style.transform = 'translateY(0)';
+            });
+        }, 180);
+    }
+
+    function selectOption(selectedIdx) {
+        if (quizState.answered) return;
+        quizState.answered = true;
+
+        const q = quizState.questions[quizState.currentIndex];
+        const selectedOpt = q.options[selectedIdx];
+        const correctIdx = q.options.findIndex(o => o.isCorrect);
+        const isCorrect = selectedOpt.isCorrect;
+
+        const buttons = document.querySelectorAll('#options-list .option-btn');
+        buttons.forEach((btn, i) => {
+            btn.disabled = true;
+            if (i === correctIdx) btn.classList.add('correct');
+            else if (i === selectedIdx) btn.classList.add('incorrect');
+        });
+
+        if (isCorrect) {
+            quizState.score++;
+            const scoreEl = document.getElementById('score');
+            scoreEl.textContent = quizState.score;
+            scoreEl.style.animation = 'none';
+            void scoreEl.offsetWidth;
+            scoreEl.style.animation = 'scorePop 0.4s var(--ease-bounce)';
+        }
+
+        const explBox = document.getElementById('explanation-box');
+        explBox.classList.add(isCorrect ? 'show-correct' : 'show-incorrect');
+        explBox.style.display = 'block';
+        explBox.innerHTML = `<strong>${isCorrect ? '✅ Correct!' : '❌ Not quite.'}</strong><br>${selectedOpt.explanation}`;
+
+        const nextBtn = document.getElementById('next-btn');
+        const isLast = quizState.currentIndex === quizState.questions.length - 1;
+        nextBtn.textContent = isLast ? 'View Results' : 'Continue';
+        nextBtn.style.display = 'inline-block';
+        nextBtn.style.animation = 'fadeInUp 0.4s var(--ease-smooth)';
+    }
+
+    function nextQuestion() {
+        quizState.currentIndex++;
+        if (quizState.currentIndex >= quizState.questions.length) {
+            showResults();
+        } else {
+            renderQuestion();
+        }
+    }
+
+    function showResults() {
+        document.getElementById('progress-bar').style.width = '100%';
+
+        const quizContainer = document.getElementById('quiz-container');
+        quizContainer.style.opacity = 0;
+
+        setTimeout(() => {
+            quizContainer.style.display = 'none';
+
+            const resultScreen = document.getElementById('result-screen');
+            resultScreen.style.display = 'block';
+            resultScreen.style.opacity = 0;
+            resultScreen.style.transform = 'scale(0.96)';
+
+            const total = quizState.questions.length;
+            const score = quizState.score;
+            const pct = score / total;
+
+            document.getElementById('final-score').textContent = `${score}/${total}`;
+
+            let stars, feedback;
+            if (pct === 1) {
+                stars = '⭐⭐⭐⭐⭐';
+                feedback = "Outstanding! You have a strong, honest understanding of your strengths and weaknesses.";
+            } else if (pct >= 0.8) {
+                stars = '⭐⭐⭐⭐';
+                feedback = "Great job! You clearly grasp most of the key ideas — just a few spots to revisit.";
+            } else if (pct >= 0.6) {
+                stars = '⭐⭐⭐';
+                feedback = "Solid effort! Review the Essential Knowledge tab to sharpen a few concepts.";
+            } else if (pct >= 0.4) {
+                stars = '⭐⭐';
+                feedback = "You're getting there — go back through the theory before trying again.";
+            } else {
+                stars = '⭐';
+                feedback = "Don't worry — assessing your strengths and weaknesses is a process. Revisit the knowledge tab and try again.";
+            }
+
+            document.getElementById('star-rating').textContent = stars;
+            document.getElementById('feedback-text').textContent = feedback;
+
+            requestAnimationFrame(() => {
+                resultScreen.style.opacity = 1;
+                resultScreen.style.transform = 'scale(1)';
+            });
+        }, 400);
+    }
+
+    function resetQuiz() {
+        const resultScreen = document.getElementById('result-screen');
+        resultScreen.style.opacity = 0;
+        setTimeout(() => {
+            quizState.questions = [];
+            startQuiz();
+        }, 300);
+    }
+</script>
+
+</body>
+</html>

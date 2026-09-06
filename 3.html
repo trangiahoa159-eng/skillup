@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skillup</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- ĐÈN NỀN AMBIENT GLOW -->
+    <div class="ambient-glow-1"></div>
+    <div class="ambient-glow-2"></div>
+
+    <!-- HEADER & THANH NAV -->
+    <header class="header">
+        <div class="container header-inner">
+            <a href="index.html" class="logo">
+                <div class="logo-icon">S</div>
+                SkillUp
+            </a>
+            <nav class="nav" id="mainNav">
+                <div class="nav-pill" id="navPill"></div>
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="2.html" class="nav-link">Skills</a>
+                <a href="3.html" class="nav-link active">About</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT - ABOUT CARD CONTAINER -->
+    <main class="container page-content">
+        <section class="about-card">
+            <!-- BADGE -->
+            <div class="badge">ABOUT SKILLUP</div>
+
+            <!-- HEADING -->
+            <h1 class="about-title">
+                Small insights.<br>
+                <span class="gradient-text">Better growth.</span>
+            </h1>
+
+            <!-- DESCRIPTIONS -->
+            <div class="about-text-group">
+                <p class="about-desc">
+                    SkillUp được thiết kế như một không gian tự đánh giá đơn giản, giúp bạn nhìn lại những kỹ năng ảnh hưởng đến cách bạn sống, kết nối và tương tác với thế giới.
+                </p>
+                <p class="about-desc">
+                    Mỗi skill gồm hai phần: <strong>Essential Things</strong> để xây dựng nền tảng kiến thức và <strong>Quiz to Analyze</strong> để tự đánh giá mức độ hiện tại.
+                </p>
+            </div>
+
+            <!-- 3 SUB-CARDS GRID -->
+            <div class="about-sub-grid">
+                <div class="about-sub-card">
+                    <h3 class="sub-card-title">Oneself</h3>
+                    <p class="sub-card-desc">Hiểu và phát triển chính mình.</p>
+                </div>
+
+                <div class="about-sub-card">
+                    <h3 class="sub-card-title">Close Relationship</h3>
+                    <p class="sub-card-desc">Xây dựng những mối quan hệ gần gũi.</p>
+                </div>
+
+                <div class="about-sub-card">
+                    <h3 class="sub-card-title">Social</h3>
+                    <p class="sub-card-desc">Kết nối và phát triển trong xã hội.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="container footer-inner">
+            <div class="footer-brand">
+                <div class="logo-icon logo-icon-sm">S</div>
+                <span>© 2026 SkillUp. All rights reserved.</span>
+            </div>
+            <div class="footer-links">
+                <a href="#" class="footer-link">Privacy Policy</a>
+                <a href="#" class="footer-link">Terms of Service</a>
+                <a href="#" class="footer-link">Contact</a>
+            </div>
+        </div>
+    </footer>
+    <!-- SLIDING NAV PILL SCRIPT -->
+    <script>
+        const nav = document.getElementById('mainNav');
+        const pill = document.getElementById('navPill');
+        const links = nav.querySelectorAll('.nav-link');
+        const activeLink = nav.querySelector('.nav-link.active');
+
+        function movePillTo(element, animate = true) {
+            if (!element || !pill) return;
+            const navRect = nav.getBoundingClientRect();
+            const rect = element.getBoundingClientRect();
+
+            if (!animate) {
+                pill.style.transition = 'none';
+            } else {
+                pill.style.transition = 'transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), width 0.45s cubic-bezier(0.16, 1, 0.3, 1)';
+            }
+
+            pill.style.width = `${rect.width}px`;
+            pill.style.transform = `translateX(${rect.left - navRect.left}px)`;
+
+            if (!animate) {
+                pill.offsetHeight; // Force reflow
+            }
+        }
+
+        // Đặt vị trí ngay lập tức khi trang load xong
+        const initPill = () => movePillTo(activeLink, false);
+        window.addEventListener('DOMContentLoaded', initPill);
+        window.addEventListener('load', initPill);
+        window.addEventListener('resize', initPill);
+
+        // Hiệu ứng trượt mượt khi lướt chuột qua lại
+        links.forEach(link => {
+            link.addEventListener('mouseenter', () => movePillTo(link, true));
+        });
+
+        nav.addEventListener('mouseleave', () => movePillTo(activeLink, true));
+    </script>
+
+</body>
+</html>
+
+
+</body>
+</html>

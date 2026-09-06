@@ -1,0 +1,1584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkillUp - Johari Window</title>
+    <!-- Google Inter Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-dark: #05070f;
+            --glass-bg: rgba(15, 22, 41, 0.65);
+            --glass-card: rgba(255, 255, 255, 0.03);
+            --glass-card-hover: rgba(255, 255, 255, 0.07);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --glass-border-light: rgba(255, 255, 255, 0.25);
+
+            --accent-purple: #6366f1;
+            --accent-indigo: #818cf8;
+            --accent-cyan: #38bdf8;
+            --accent-pink: #ec4899;
+
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --text-dim: #64748b;
+
+            --correct-bg: rgba(34, 197, 94, 0.15);
+            --correct-border: #22c55e;
+            --incorrect-bg: rgba(239, 68, 68, 0.15);
+            --incorrect-border: #ef4444;
+
+            --ease-smooth: cubic-bezier(0.16, 1, 0.3, 1);
+            --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            background-image:
+                radial-gradient(circle at 50% 0%, rgba(99, 102, 241, 0.15), transparent 70%),
+                radial-gradient(circle at 80% 80%, rgba(56, 189, 248, 0.1), transparent 50%);
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 2.5rem 1rem 0 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Ambient Glow Blobs - Slow Floating */
+        .ambient-glow {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(120px);
+            z-index: -1;
+            pointer-events: none;
+            opacity: 0.5;
+            will-change: transform;
+        }
+        .glow-1 {
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.8) 0%, rgba(99, 102, 241, 0) 70%);
+            top: -150px;
+            left: -150px;
+            animation: floatGlow1 22s infinite alternate ease-in-out;
+        }
+        .glow-2 {
+            width: 550px;
+            height: 550px;
+            background: radial-gradient(circle, rgba(6, 182, 212, 0.7) 0%, rgba(6, 182, 212, 0) 70%);
+            bottom: -200px;
+            right: -150px;
+            animation: floatGlow2 26s infinite alternate ease-in-out;
+        }
+        .glow-3 {
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(236, 72, 153, 0.4) 0%, rgba(236, 72, 153, 0) 70%);
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: floatGlow3 18s infinite alternate ease-in-out;
+        }
+
+        @keyframes floatGlow1 {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(80px, 60px) scale(1.2); }
+        }
+        @keyframes floatGlow2 {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(-70px, -50px) scale(1.15); }
+        }
+        @keyframes floatGlow3 {
+            0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0.2; }
+            100% { transform: translate(-40%, -60%) scale(1.2); opacity: 0.5; }
+        }
+
+        .container {
+            max-width: 880px;
+            width: 100%;
+            z-index: 1;
+            flex: 1;
+        }
+
+        /* Back Link */
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            color: #ffffff;
+            text-decoration: none;
+            margin-bottom: 2rem;
+            font-size: 0.92rem;
+            font-weight: 600;
+            padding: 0.65rem 1.4rem;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(56, 189, 248, 0.2));
+            border: 1px solid rgba(129, 140, 248, 0.4);
+            border-radius: 30px;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            transition: all 0.5s var(--ease-smooth);
+            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        .back-link::after {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
+            transition: left 0.7s var(--ease-smooth);
+        }
+        .back-link:hover::after {
+            left: 100%;
+        }
+        .back-link:hover {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.45), rgba(56, 189, 248, 0.45));
+            border-color: rgba(255, 255, 255, 0.7);
+            transform: translateX(-6px) scale(1.02);
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.5);
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+            animation: fadeInDown 0.8s var(--ease-smooth);
+        }
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .header-badge {
+            display: inline-block;
+            padding: 0.4rem 1.1rem;
+            font-size: 0.78rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: #e0e7ff;
+            background: rgba(99, 102, 241, 0.2);
+            border: 1px solid rgba(129, 140, 248, 0.4);
+            border-radius: 30px;
+            margin-bottom: 1rem;
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.3);
+        }
+
+        .brand-title {
+            display: inline-block;
+            font-size: 2.8rem;
+            font-weight: 900;
+            letter-spacing: -0.03em;
+            margin-bottom: 0.6rem;
+            background: linear-gradient(135deg, #ffffff 20%, #c7d2fe 60%, #38bdf8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            cursor: pointer;
+            transition: transform 0.4s var(--ease-bounce), filter 0.4s ease;
+            position: relative;
+        }
+        .brand-title:hover {
+            transform: scale(1.03);
+            filter: drop-shadow(0 0 15px rgba(99, 102, 241, 0.6));
+        }
+
+        .header p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            font-weight: 400;
+        }
+
+        /* TAB NAVIGATION SLIDER */
+        .tab-navigation {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2.2rem;
+            transition: all 0.7s var(--ease-smooth);
+        }
+
+        .tab-btn {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2.2rem 1.5rem;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            color: var(--text-muted);
+            cursor: pointer;
+            backdrop-filter: blur(30px) saturate(180%);
+            -webkit-backdrop-filter: blur(30px) saturate(180%);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+            transition: all 0.5s var(--ease-smooth);
+            text-align: center;
+            gap: 0.9rem;
+            overflow: hidden;
+        }
+
+        .tab-btn::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
+            transition: left 0.8s var(--ease-smooth);
+        }
+        .tab-btn:hover::before {
+            left: 100%;
+        }
+
+        .tab-btn svg {
+            width: 40px;
+            height: 40px;
+            transition: all 0.5s var(--ease-bounce);
+            color: var(--accent-indigo);
+            filter: drop-shadow(0 0 8px rgba(129, 140, 248, 0.4));
+        }
+
+        .tab-btn-text {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        .tab-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #ffffff;
+            transition: color 0.4s ease;
+        }
+
+        .tab-desc {
+            font-size: 0.88rem;
+            color: var(--text-muted);
+            font-weight: 400;
+            max-width: 280px;
+            transition: all 0.4s var(--ease-smooth);
+            opacity: 1;
+            max-height: 60px;
+        }
+
+        .tab-btn:hover {
+            transform: translateY(-8px) scale(1.02);
+            border-color: rgba(129, 140, 248, 0.5);
+            background: rgba(30, 41, 67, 0.7);
+            box-shadow: 0 20px 45px rgba(99, 102, 241, 0.35), 0 0 20px rgba(56, 189, 248, 0.2);
+        }
+
+        .tab-btn:hover svg {
+            transform: scale(1.2) rotate(-5deg);
+            color: var(--accent-cyan);
+            filter: drop-shadow(0 0 12px rgba(56, 189, 248, 0.8));
+        }
+
+        .tab-navigation.shrunk {
+            display: flex;
+            background: rgba(10, 15, 30, 0.8);
+            border: 1px solid var(--glass-border-light);
+            padding: 8px;
+            border-radius: 20px;
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
+            gap: 8px;
+        }
+
+        .tab-navigation.shrunk .tab-btn {
+            flex: 1;
+            flex-direction: row;
+            padding: 1rem 1.4rem;
+            border-radius: 14px;
+            background: transparent;
+            border: none;
+            box-shadow: none;
+            gap: 0.7rem;
+        }
+
+        .tab-navigation.shrunk .tab-btn svg {
+            width: 22px;
+            height: 22px;
+        }
+
+        .tab-navigation.shrunk .tab-btn-text {
+            flex-direction: row;
+        }
+
+        .tab-navigation.shrunk .tab-title {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .tab-navigation.shrunk .tab-desc {
+            opacity: 0;
+            max-height: 0;
+            display: none;
+        }
+
+        .tab-navigation.shrunk .tab-btn:hover:not(.active) {
+            transform: scale(1.02);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .tab-navigation.shrunk .tab-btn.active {
+            color: #ffffff;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.9), rgba(79, 70, 229, 0.95));
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.4);
+        }
+
+        .tab-content {
+            display: none;
+            opacity: 0;
+            transform: translateY(25px) scale(0.98);
+            transition: opacity 0.5s var(--ease-smooth), transform 0.5s var(--ease-smooth);
+            will-change: transform, opacity;
+        }
+
+        .tab-content.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        .glass-panel {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            padding: 2.5rem;
+            backdrop-filter: blur(35px) saturate(180%);
+            -webkit-backdrop-filter: blur(35px) saturate(180%);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.15);
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            letter-spacing: -0.01em;
+        }
+        .section-title span {
+            font-size: 1.5rem;
+            filter: drop-shadow(0 0 8px rgba(255,255,255,0.4));
+        }
+
+        .knowledge-def {
+            font-size: 1.08rem;
+            line-height: 1.75;
+            color: #e2e8f0;
+            background: rgba(255, 255, 255, 0.025);
+            border: 1px solid var(--glass-border);
+            border-left: 4px solid var(--accent-indigo);
+            padding: 1.5rem;
+            border-radius: 18px;
+            margin-bottom: 2.2rem;
+            backdrop-filter: blur(10px);
+            box-shadow: inset 0 0 20px rgba(99, 102, 241, 0.05);
+            transition: all 0.4s var(--ease-smooth);
+        }
+        .knowledge-def:hover {
+            border-left-color: var(--accent-cyan);
+            background: rgba(255, 255, 255, 0.04);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .pillars-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 1.4rem;
+            margin-bottom: 2.2rem;
+        }
+
+        .pillar-card {
+            background: var(--glass-card);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 1.6rem;
+            transition: all 0.5s var(--ease-smooth);
+            position: relative;
+            overflow: hidden;
+        }
+        .pillar-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-purple), var(--accent-cyan), var(--accent-pink));
+            opacity: 0;
+            transition: opacity 0.4s var(--ease-smooth);
+        }
+        .pillar-card:hover {
+            background: var(--glass-card-hover);
+            border-color: var(--glass-border-light);
+            transform: translateY(-6px) scale(1.01);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3), 0 0 20px rgba(99, 102, 241, 0.15);
+        }
+        .pillar-card:hover::before {
+            opacity: 1;
+        }
+        .pillar-card h3 {
+            color: #c7d2fe;
+            margin-bottom: 0.7rem;
+            font-size: 1.15rem;
+            font-weight: 700;
+        }
+        .pillar-card p {
+            color: var(--text-muted);
+            font-size: 0.96rem;
+            line-height: 1.65;
+        }
+
+        .practical-section {
+            margin-top: 2.2rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--glass-border);
+        }
+
+        .action-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+            margin-bottom: 2.2rem;
+        }
+
+        .action-item {
+            display: flex;
+            gap: 1.3rem;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 1.4rem;
+            align-items: flex-start;
+            transition: all 0.4s var(--ease-smooth);
+        }
+        .action-item:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(129, 140, 248, 0.4);
+            transform: translateX(6px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+        }
+        .action-icon {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.25), rgba(56, 189, 248, 0.25));
+            width: 52px;
+            height: 52px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 16px;
+            flex-shrink: 0;
+            border: 1px solid rgba(129, 140, 248, 0.3);
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.2);
+            transition: transform 0.4s var(--ease-bounce);
+        }
+        .action-item:hover .action-icon {
+            transform: scale(1.15) rotate(5deg);
+        }
+        .action-content h4 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #f1f5f9;
+            margin-bottom: 0.4rem;
+        }
+        .action-content p {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        .pro-tip {
+            background: linear-gradient(135deg, rgba(234, 179, 8, 0.15), rgba(245, 158, 11, 0.06));
+            border: 1px solid rgba(245, 158, 11, 0.4);
+            border-radius: 20px;
+            padding: 1.4rem 1.6rem;
+            color: #fef08a;
+            font-size: 0.98rem;
+            line-height: 1.65;
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            box-shadow: 0 8px 25px rgba(245, 158, 11, 0.15);
+            transition: all 0.4s var(--ease-smooth);
+        }
+        .pro-tip:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(245, 158, 11, 0.25);
+        }
+        .pro-tip-icon {
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .quiz-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.4rem;
+            color: var(--text-muted);
+            font-size: 0.98rem;
+            font-weight: 700;
+        }
+
+        .score-badge {
+            background: rgba(99, 102, 241, 0.25);
+            color: #c7d2fe;
+            padding: 0.45rem 1.1rem;
+            border-radius: 30px;
+            border: 1px solid rgba(99, 102, 241, 0.4);
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.2);
+        }
+
+        #score {
+            display: inline-block;
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 2.2rem;
+            padding: 2px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple), var(--accent-pink));
+            border-radius: 10px;
+            transition: width 0.6s var(--ease-smooth);
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.8);
+        }
+
+        #quiz-container {
+            transition: opacity 0.4s var(--ease-smooth), transform 0.4s var(--ease-smooth);
+        }
+
+        .question-text {
+            font-size: 1.35rem;
+            font-weight: 800;
+            line-height: 1.55;
+            margin-bottom: 2rem;
+            color: #ffffff;
+            letter-spacing: -0.01em;
+        }
+
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .option-btn {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 1.2rem 1.5rem;
+            color: var(--text-main);
+            font-size: 1.02rem;
+            font-weight: 500;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.35s var(--ease-smooth);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            border-color: rgba(129, 140, 248, 0.5);
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateX(8px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+
+        .option-btn:disabled {
+            cursor: default;
+        }
+
+        .option-btn.correct {
+            background: var(--correct-bg) !important;
+            border-color: var(--correct-border) !important;
+            color: #4ade80 !important;
+            box-shadow: 0 0 20px rgba(34, 197, 94, 0.3);
+            animation: bounceSelect 0.4s var(--ease-bounce);
+        }
+
+        .option-btn.incorrect {
+            background: var(--incorrect-bg) !important;
+            border-color: var(--incorrect-border) !important;
+            color: #f87171 !important;
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+            animation: shake 0.4s ease-in-out;
+        }
+
+        @keyframes bounceSelect {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-6px); }
+            40%, 80% { transform: translateX(6px); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(14px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes scorePop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.35); color: #4ade80; }
+            100% { transform: scale(1); }
+        }
+
+        .explanation-box {
+            display: none;
+            padding: 1.4rem 1.6rem;
+            border-radius: 16px;
+            font-size: 1rem;
+            line-height: 1.65;
+            margin-bottom: 2rem;
+            animation: fadeInSlide 0.5s var(--ease-smooth);
+        }
+
+        @keyframes fadeInSlide {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .explanation-box.show-correct {
+            background: var(--correct-bg);
+            border: 1px solid var(--correct-border);
+            color: #bbf7d0;
+        }
+
+        .explanation-box.show-incorrect {
+            background: var(--incorrect-bg);
+            border: 1px solid var(--incorrect-border);
+            color: #fecaca;
+        }
+
+        .action-btn {
+            background: linear-gradient(135deg, var(--accent-purple), #4f46e5);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 1rem 2.4rem;
+            border-radius: 14px;
+            font-size: 1.05rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: none;
+            margin-left: auto;
+            transition: all 0.4s var(--ease-smooth);
+            box-shadow: 0 10px 25px rgba(99, 102, 241, 0.4);
+        }
+
+        .action-btn:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 15px 35px rgba(99, 102, 241, 0.6);
+        }
+
+        .result-screen {
+            text-align: center;
+            display: none;
+            padding: 2.5rem 1rem;
+            transition: opacity 0.5s var(--ease-smooth), transform 0.5s var(--ease-smooth);
+        }
+
+        .result-title {
+            font-size: 2.2rem;
+            font-weight: 900;
+            color: #ffffff;
+            margin-bottom: 0.6rem;
+        }
+
+        .result-score {
+            font-size: 4.5rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #a5b4fc, #6366f1, #38bdf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 1rem 0;
+            letter-spacing: -0.04em;
+            filter: drop-shadow(0 10px 20px rgba(99, 102, 241, 0.3));
+        }
+
+        .star-rating {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            letter-spacing: 0.3rem;
+            filter: drop-shadow(0 0 10px rgba(250, 204, 21, 0.5));
+        }
+
+        .feedback-text {
+            color: var(--text-muted);
+            font-size: 1.15rem;
+            margin-bottom: 2.5rem;
+            max-width: 520px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.65;
+        }
+
+        .restart-btn {
+            background: linear-gradient(135deg, var(--accent-purple), #4f46e5);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 1.1rem 3rem;
+            border-radius: 16px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.4s var(--ease-smooth);
+            box-shadow: 0 12px 30px rgba(99, 102, 241, 0.5);
+        }
+
+        .restart-btn:hover {
+            transform: translateY(-3px) scale(1.03);
+            box-shadow: 0 18px 40px rgba(99, 102, 241, 0.7);
+        }
+
+        .site-footer {
+            width: 100vw;
+            background: rgba(5, 7, 15, 0.85);
+            border-top: 1px solid var(--glass-border);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 1.8rem 1rem;
+            margin-top: 4rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        .footer-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1.2rem;
+        }
+
+        .footer-left {
+            display: flex;
+            align-items: center;
+            gap: 0.9rem;
+            cursor: pointer;
+        }
+
+        .footer-badge-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #a855f7, #6366f1);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-weight: 900;
+            font-size: 1rem;
+            box-shadow: 0 0 15px rgba(168, 85, 247, 0.5);
+            transition: transform 0.3s var(--ease-bounce);
+        }
+
+        .footer-left:hover .footer-badge-icon {
+            transform: scale(1.15) rotate(-5deg);
+        }
+
+        .copyright-text {
+            color: var(--text-muted);
+            font-size: 0.92rem;
+            font-weight: 500;
+        }
+
+        .footer-links {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .footer-link {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.92rem;
+            font-weight: 500;
+            transition: color 0.3s ease, transform 0.3s ease;
+        }
+
+        .footer-link:hover {
+            color: var(--accent-cyan);
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 680px) {
+            body { padding: 1.5rem 0.8rem 0 0.8rem; }
+            .glass-panel { padding: 1.6rem; border-radius: 22px; }
+            .brand-title { font-size: 2.2rem; }
+            .result-score { font-size: 3.5rem; }
+            .action-item { flex-direction: column; }
+            .tab-navigation { grid-template-columns: 1fr; }
+            .footer-inner { flex-direction: column; text-align: center; justify-content: center; }
+            .footer-links { gap: 1.2rem; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="ambient-glow glow-1"></div>
+<div class="ambient-glow glow-2"></div>
+<div class="ambient-glow glow-3"></div>
+
+<div class="container">
+    <a href="01.html" class="back-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+        Back to Oneself
+    </a>
+
+    <div class="header">
+        <span class="header-badge">Core Skill #06</span>
+        <div>
+            <h1 id="skill-title" class="brand-title" onclick="resetToHome()" title="Click to reset view">Johari Window</h1>
+        </div>
+        <p id="skill-subtitle">Understand yourself through others' objective perspective</p>
+    </div>
+
+    <div class="tab-navigation" id="tab-nav">
+        <button class="tab-btn" onclick="switchTab('knowledge-tab')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
+            <div class="tab-btn-text">
+                <span class="tab-title">Essential Knowledge</span>
+                <span class="tab-desc">Explore theories, pillars &amp; practical frameworks</span>
+            </div>
+        </button>
+        <button class="tab-btn" onclick="switchTab('quiz-tab')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+            <div class="tab-btn-text">
+                <span class="tab-title">Quiz Assessment</span>
+                <span class="tab-desc">Test your understanding with 10 random questions</span>
+            </div>
+        </button>
+    </div>
+
+    <div id="knowledge-tab" class="tab-content">
+        <div class="glass-panel">
+            <div class="section-title">
+                <span>🪟</span> The Essence of Johari Window
+            </div>
+            <div id="knowledge-def" class="knowledge-def">Loading theory...</div>
+
+            <div class="section-title" style="margin-top: 2.2rem;">
+                <span>🏛️</span> Core Pillars
+            </div>
+            <div id="pillars-grid" class="pillars-grid"></div>
+
+            <div class="practical-section">
+                <div class="section-title">
+                    <span>🚀</span> Practical Action Framework
+                </div>
+                <div class="action-list">
+                    <div class="action-item">
+                        <div class="action-icon">🗨️</div>
+                        <div class="action-content">
+                            <h4>Ask for Direct Feedback</h4>
+                            <p>Regularly ask a trusted person a specific question, like "Is there anything about how I communicate that I might not notice?"</p>
+                        </div>
+                    </div>
+
+                    <div class="action-item">
+                        <div class="action-icon">🔓</div>
+                        <div class="action-content">
+                            <h4>Appropriate Self-Disclosure</h4>
+                            <p>Share relevant, real information about yourself with people you trust, when the moment actually calls for it.</p>
+                        </div>
+                    </div>
+
+                    <div class="action-item">
+                        <div class="action-icon">🧗</div>
+                        <div class="action-content">
+                            <h4>Try Something New</h4>
+                            <p>Step into an unfamiliar activity or situation \u2014 it's one of the few ways to surface traits from your Unknown Area.</p>
+                        </div>
+                    </div>
+
+                    <div class="action-item">
+                        <div class="action-icon">🪟</div>
+                        <div class="action-content">
+                            <h4>Window Check-In</h4>
+                            <p>Every so often, reflect on all four areas together and notice which one has been neglected lately.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pro-tip">
+                    <span class="pro-tip-icon">💡</span>
+                    <div>
+                        <strong>Pro-Tip:</strong> The Open Area doesn't grow by accident \u2014 it grows every time you either disclose something real or actually listen to feedback.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="quiz-tab" class="tab-content">
+        <div class="glass-panel">
+            <div class="quiz-header">
+                <span>Question <span id="current-question">1</span>/<span id="total-questions">10</span></span>
+                <span class="score-badge">Score: <span id="score">0</span></span>
+            </div>
+
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+
+            <div id="quiz-container">
+                <div class="question-text" id="question-text">Loading question...</div>
+                <div class="options-list" id="options-list"></div>
+                <div class="explanation-box" id="explanation-box"></div>
+                <button class="action-btn" id="next-btn" onclick="nextQuestion()">Continue</button>
+            </div>
+
+            <div class="result-screen" id="result-screen">
+                <h2 class="result-title">Assessment Complete!</h2>
+                <div class="result-score" id="final-score">0/10</div>
+                <div class="star-rating" id="star-rating">⭐⭐⭐</div>
+                <p class="feedback-text" id="feedback-text">Great job on completing the assessment!</p>
+                <button class="restart-btn" onclick="resetQuiz()">Retake Quiz</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer class="site-footer">
+    <div class="footer-inner">
+        <div class="footer-left" onclick="resetToHome()">
+            <div class="footer-badge-icon">S</div>
+            <span class="copyright-text">&copy; 2026 SkillUp. All rights reserved.</span>
+        </div>
+        <div class="footer-links">
+            <a href="#" class="footer-link">Privacy Policy</a>
+            <a href="#" class="footer-link">Terms of Service</a>
+            <a href="#" class="footer-link">Support</a>
+        </div>
+    </div>
+</footer>
+
+<script>
+    /* =========================================================
+       TAB SWITCHING
+       ========================================================= */
+    function switchTab(tabId) {
+        document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+
+        const nav = document.getElementById('tab-nav');
+        nav.classList.add('shrunk');
+
+        const activeContent = document.getElementById(tabId);
+        if (activeContent) activeContent.classList.add('active');
+
+        const activeBtn = document.querySelector(`[onclick="switchTab('${tabId}')"]`);
+        if (activeBtn) activeBtn.classList.add('active');
+
+        if (tabId === 'quiz-tab' && quizState.questions.length === 0) {
+            startQuiz();
+        }
+    }
+
+    function resetToHome() {
+        const nav = document.getElementById('tab-nav');
+        nav.classList.remove('shrunk');
+        document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    }
+
+    /* =========================================================
+       CONTENT DATA
+       ========================================================= */
+    const selfDiscoveryContent = {
+        definition: "The Johari Window is a self-awareness framework that maps what is known or unknown about you across four areas \u2014 Open, Blind, Hidden, and Unknown \u2014 based on whether you and the people around you are aware of it. Growing self-awareness, in this model, mostly means expanding the Open Area through honest self-disclosure and honest feedback.",
+        pillars: [
+            {
+                title: "Open Area",
+                text: "What both you and others already know about you \u2014 your foundation for genuine connection."
+            },
+            {
+                title: "Blind Area",
+                text: "What others notice about you that you haven't recognized yet, often only visible through honest feedback."
+            },
+            {
+                title: "Hidden Area",
+                text: "What you know about yourself but haven't shared, which shrinks through appropriate, trust-based disclosure."
+            },
+            {
+                title: "Unknown Area",
+                text: "Potential traits neither you nor others have discovered yet, often surfaced by trying new things."
+            }
+        ]
+    };
+
+    /* =========================================================
+       QUIZ QUESTION BANK
+       Each question has 4 options, each with its OWN explanation.
+       correctIndex marks the correct option (index into "options").
+       ========================================================= */
+    const quizBank = [
+        {
+            question: "What is the Johari Window?",
+            options: [
+                { text: "A tool for scheduling daily tasks", explanation: "The Johari Window is unrelated to task scheduling." },
+                { text: "A framework describing what is known or unknown about you, to yourself and to others", explanation: "Correct. It maps self-awareness across four areas based on what's known to you and to others." },
+                { text: "A test that measures intelligence", explanation: "It isn't an intelligence test; it's a self-awareness framework." },
+                { text: "A method for setting career goals", explanation: "It's a self-awareness tool, not a career-planning method." },
+            ],
+            correctIndex: 1
+        },
+        {
+            question: "What defines the \"Open Area\" in the Johari Window?",
+            options: [
+                { text: "Known to yourself but unknown to others", explanation: "This describes the Hidden Area, not the Open Area." },
+                { text: "Unknown to yourself but known to others", explanation: "This describes the Blind Area, not the Open Area." },
+                { text: "Known to both yourself and others", explanation: "Correct. The Open Area covers traits or information both you and others are aware of." },
+                { text: "Unknown to both yourself and others", explanation: "This describes the Unknown Area, not the Open Area." },
+            ],
+            correctIndex: 2
+        },
+        {
+            question: "What defines the \"Blind Area\" in the Johari Window?",
+            options: [
+                { text: "Known to yourself but unknown to others", explanation: "This describes the Hidden Area, not the Blind Area." },
+                { text: "Unknown to yourself but known to others", explanation: "Correct. The Blind Area covers things others notice about you that you haven't recognized yourself." },
+                { text: "Known to both yourself and others", explanation: "This describes the Open Area, not the Blind Area." },
+                { text: "Unknown to both yourself and others", explanation: "This describes the Unknown Area, not the Blind Area." },
+            ],
+            correctIndex: 1
+        },
+        {
+            question: "What defines the \"Hidden Area\" in the Johari Window?",
+            options: [
+                { text: "Known to yourself but unknown to others", explanation: "Correct. The Hidden Area covers things you know about yourself that you haven't shared with others." },
+                { text: "Unknown to yourself but known to others", explanation: "This describes the Blind Area, not the Hidden Area." },
+                { text: "Known to both yourself and others", explanation: "This describes the Open Area, not the Hidden Area." },
+                { text: "Unknown to both yourself and others", explanation: "This describes the Unknown Area, not the Hidden Area." },
+            ],
+            correctIndex: 0
+        },
+        {
+            question: "What defines the \"Unknown Area\" in the Johari Window?",
+            options: [
+                { text: "Known to yourself but unknown to others", explanation: "This describes the Hidden Area, not the Unknown Area." },
+                { text: "Unknown to yourself but known to others", explanation: "This describes the Blind Area, not the Unknown Area." },
+                { text: "Known to both yourself and others", explanation: "This describes the Open Area, not the Unknown Area." },
+                { text: "Unknown to both yourself and others", explanation: "Correct. The Unknown Area covers potential or traits neither you nor others have discovered yet." },
+            ],
+            correctIndex: 3
+        },
+        {
+            question: "What is the main purpose of using the Johari Window?",
+            options: [
+                { text: "To rank people by how self-aware they are", explanation: "The model isn't designed to rank or compare people." },
+                { text: "To help increase self-awareness and improve communication with others", explanation: "Correct. It's intended to grow self-awareness and support more open communication." },
+                { text: "To keep as much information hidden as possible", explanation: "The model actually encourages appropriately expanding the Open Area, not hiding more." },
+                { text: "To judge other people's personalities", explanation: "The framework is a tool for self-understanding, not judging others." },
+            ],
+            correctIndex: 1
+        },
+        {
+            question: "How can someone typically expand their \"Open Area\"?",
+            options: [
+                { text: "By hiding more information from others", explanation: "Hiding more information shrinks the Open Area rather than expanding it." },
+                { text: "By sharing appropriate information about themselves and seeking honest feedback", explanation: "Correct. Both self-disclosure and receiving feedback help grow the Open Area." },
+                { text: "By avoiding all social interaction", explanation: "Avoiding interaction limits the opportunities to expand shared understanding." },
+                { text: "By only interacting with strangers", explanation: "Interacting only with strangers doesn't build the ongoing trust needed to expand this area." },
+            ],
+            correctIndex: 1
+        },
+        {
+            question: "Your friends notice that you interrupt people frequently, but you never realized it. Which area does this belong to?",
+            options: [
+                { text: "Open Area", explanation: "The Open Area requires that you also be aware of the trait, which isn't the case here." },
+                { text: "Blind Area", explanation: "Correct. Others know it, but you don't — this is the definition of the Blind Area." },
+                { text: "Hidden Area", explanation: "The Hidden Area requires that you know it and others don't, which is the opposite of this case." },
+                { text: "Unknown Area", explanation: "The Unknown Area requires that no one, including others, is aware of it yet." },
+            ],
+            correctIndex: 1
+        },
+        {
+            question: "You know you're afraid of public speaking, but you've never told anyone. Which area does this belong to?",
+            options: [
+                { text: "Open Area", explanation: "The Open Area requires that others also know about it, which isn't true here." },
+                { text: "Blind Area", explanation: "The Blind Area requires that you be unaware of it, but here you know it clearly." },
+                { text: "Hidden Area", explanation: "Correct. You're aware of it, but you've kept it from others — this is the Hidden Area." },
+                { text: "Unknown Area", explanation: "The Unknown Area requires that you yourself are also unaware of it." },
+            ],
+            correctIndex: 2
+        },
+        {
+            question: "Everyone, including yourself, is unaware of a hidden talent you've never had the chance to try. Which area does this belong to?",
+            options: [
+                { text: "Open Area", explanation: "The Open Area requires that it's already known to both you and others." },
+                { text: "Blind Area", explanation: "The Blind Area requires that others already know it, which isn't the case here." },
+                { text: "Hidden Area", explanation: "The Hidden Area requires that you already know it, which isn't the case here." },
+                { text: "Unknown Area", explanation: "Correct. Neither you nor others are aware of it yet — this is the Unknown Area." },
+            ],
+            correctIndex: 3
+        },
+        {
+            question: "Your close coworkers and you both know you're great at organizing events, since you've done it publicly many times. Which area does this belong to?",
+            options: [
+                { text: "Open Area", explanation: "Correct. Since both you and others are aware of this trait, it belongs in the Open Area." },
+                { text: "Blind Area", explanation: "The Blind Area requires that you be unaware, but you clearly know about this skill." },
+                { text: "Hidden Area", explanation: "The Hidden Area requires that others not know, but here it's publicly known." },
+                { text: "Unknown Area", explanation: "The Unknown Area requires that neither you nor others know, which isn't the case." },
+            ],
+            correctIndex: 0
+        },
+        {
+            question: "During a performance review, your manager mentions a habit you display that you had absolutely no idea about. Which area was this feedback revealing?",
+            options: [
+                { text: "Open Area", explanation: "The Open Area would mean you already knew about it too, which isn't stated here." },
+                { text: "Blind Area", explanation: "Correct. A trait others observed that surprised you is a classic example of the Blind Area." },
+                { text: "Hidden Area", explanation: "The Hidden Area would require that you already knew and kept it from them." },
+                { text: "Unknown Area", explanation: "The Unknown Area would mean the manager didn't know about it either." },
+            ],
+            correctIndex: 1
+        },
+        {
+            question: "You've been secretly planning a career change but haven't told your team yet. Which area does this belong to?",
+            options: [
+                { text: "Open Area", explanation: "The Open Area would require that your team already knows, which they don't." },
+                { text: "Blind Area", explanation: "The Blind Area would require that you be unaware of it, but you clearly know your own plan." },
+                { text: "Hidden Area", explanation: "Correct. You know it, but you haven't shared it with others yet — this is the Hidden Area." },
+                { text: "Unknown Area", explanation: "The Unknown Area would require that you yourself don't know about it either." },
+            ],
+            correctIndex: 2
+        },
+        {
+            question: "After trying a completely new activity for the first time, you discover a skill neither you nor anyone else expected you to have. Which area did this skill come from?",
+            options: [
+                { text: "Open Area", explanation: "The Open Area requires the trait to already be known to both sides beforehand." },
+                { text: "Blind Area", explanation: "The Blind Area requires that others already knew about it, which isn't the case here." },
+                { text: "Hidden Area", explanation: "The Hidden Area requires that you already knew about it, which isn't the case here." },
+                { text: "Unknown Area", explanation: "Correct. Since neither you nor others knew about it beforehand, it came from the Unknown Area." },
+            ],
+            correctIndex: 3
+        },
+        {
+            question: "What is a healthy way to respond when someone points out something in your Blind Area?",
+            options: [
+                { text: "Deny it immediately without reflection", explanation: "Denial without reflection wastes a chance to learn something real about yourself." },
+                { text: "Consider it thoughtfully, since it may reveal something you genuinely couldn't see", explanation: "Correct. Blind Area feedback often reveals something others can see that you genuinely can't." },
+                { text: "Assume they are always mistaken", explanation: "Automatically assuming the feedback is wrong isn't a fair evaluation." },
+                { text: "Cut off contact with that person", explanation: "Cutting off contact removes a valuable source of outside perspective." },
+            ],
+            correctIndex: 1
+        },
+        {
+            question: "What is a common way to reduce your Blind Area?",
+            options: [
+                { text: "Avoiding feedback from others entirely", explanation: "Avoiding feedback keeps the Blind Area from shrinking." },
+                { text: "Actively and regularly asking trusted people for honest feedback", explanation: "Correct. Actively seeking honest feedback is the main way to reduce your Blind Area." },
+                { text: "Only asking people who always agree with you", explanation: "Asking only people who agree with you limits the honesty of the feedback." },
+                { text: "Assuming you already know everything about yourself", explanation: "Assuming complete self-knowledge prevents you from noticing your actual blind spots." },
+            ],
+            correctIndex: 1
+        },
+        {
+            question: "What is a healthy way to reduce your Hidden Area appropriately?",
+            options: [
+                { text: "Share personal information indiscriminately with anyone, regardless of context", explanation: "Sharing indiscriminately without regard to context can create problems rather than build trust." },
+                { text: "Gradually and appropriately disclose relevant information to people you trust", explanation: "Correct. Thoughtful, appropriate self-disclosure to trusted people is how the Hidden Area shrinks safely." },
+                { text: "Never share anything personal with anyone", explanation: "Never sharing anything keeps the Hidden Area large and can limit close relationships." },
+                { text: "Only share information that makes you look perfect", explanation: "Only sharing flattering information isn't genuine disclosure and limits real connection." },
+            ],
+            correctIndex: 1
+        },
+        {
+            question: "What is one practical way to shrink your Unknown Area?",
+            options: [
+                { text: "Avoid ever trying new experiences", explanation: "Avoiding new experiences keeps potential undiscovered traits hidden." },
+                { text: "Try new experiences and challenges that might reveal previously undiscovered traits", explanation: "Correct. New experiences and challenges are a common way to uncover previously unknown traits." },
+                { text: "Assume the Unknown Area can never change", explanation: "The Unknown Area can shrink over time as new things are discovered." },
+                { text: "Only repeat familiar, comfortable routines", explanation: "Sticking only to familiar routines rarely reveals anything new about yourself." },
+            ],
+            correctIndex: 1
+        },
+        {
+            question: "Which of these is a practical way to actively seek feedback and reduce your Blind Area?",
+            options: [
+                { text: "Asking a trusted colleague, \"Is there anything about how I communicate that I might not notice?\"", explanation: "Correct. Directly and specifically asking a trusted person is a practical way to surface blind spots." },
+                { text: "Assuming your own self-view is already complete", explanation: "Assuming completeness prevents you from ever noticing a blind spot." },
+                { text: "Avoiding one-on-one conversations with colleagues", explanation: "Avoiding these conversations removes a valuable source of direct feedback." },
+                { text: "Only reading anonymous comments online", explanation: "Anonymous online comments are often unreliable and hard to act on constructively." },
+            ],
+            correctIndex: 0
+        },
+        {
+            question: "Which of these is an appropriate way to reduce your Hidden Area in a professional setting?",
+            options: [
+                { text: "Sharing a relevant personal challenge with a trusted mentor when it's relevant to the conversation", explanation: "Correct. Sharing relevant information with a trusted person, at an appropriate time, is a healthy way to open up." },
+                { text: "Announcing all personal information to the entire office at once", explanation: "Broadcasting everything to everyone isn't the same as thoughtful, appropriate disclosure." },
+                { text: "Never mentioning anything personal, ever", explanation: "Complete silence keeps the Hidden Area unnecessarily large." },
+                { text: "Sharing personal information only to make others uncomfortable", explanation: "Sharing to cause discomfort isn't genuine or constructive self-disclosure." },
+            ],
+            correctIndex: 0
+        },
+        {
+            question: "Which statement reflects a healthy attitude toward your own Blind Area?",
+            options: [
+                { text: "\"I'm certain there's nothing about myself that others see that I don't.\"", explanation: "Certainty that nothing exists in your Blind Area isn't realistic, since it exists for everyone to some degree." },
+                { text: "\"I know others might notice things about me that I can't see myself, and I'm open to hearing about them.\"", explanation: "Correct. This reflects openness to learning about aspects of yourself others can observe." },
+                { text: "\"I refuse to believe anyone could know something about me that I don't.\"", explanation: "Refusing this possibility blocks a well-established part of self-awareness theory." },
+                { text: "\"Only I can ever truly know myself, so feedback is pointless.\"", explanation: "Dismissing feedback as pointless ignores the value others' outside perspective can add." },
+            ],
+            correctIndex: 1
+        },
+        {
+            question: "Which statement reflects a healthy approach to your Hidden Area?",
+            options: [
+                { text: "\"I should share every private thought with everyone I meet.\"", explanation: "Sharing everything indiscriminately isn't the same as thoughtful, healthy disclosure." },
+                { text: "\"I can choose to share relevant parts of myself with people I trust, when it makes sense.\"", explanation: "Correct. Selective, trust-based sharing reflects a balanced approach to the Hidden Area." },
+                { text: "\"I should never share anything personal with anyone, ever.\"", explanation: "Complete secrecy prevents meaningful closeness in relationships." },
+                { text: "\"Hidden information about me should stay hidden forever no matter what.\"", explanation: "Treating all hidden information as permanently off-limits ignores that appropriate sharing can build trust." },
+            ],
+            correctIndex: 1
+        },
+        {
+            question: "Which situation best represents growth in self-awareness through the Johari Window model?",
+            options: [
+                { text: "Your Open Area stays exactly the same size forever", explanation: "An unchanging Open Area suggests no active growth in self-awareness is happening." },
+                { text: "Your Open Area grows as you both share more and receive more honest feedback", explanation: "Correct. Growth in self-awareness typically shows up as an expanding Open Area over time." },
+                { text: "Your Blind Area grows larger over time", explanation: "A growing Blind Area would actually represent less self-awareness, not more." },
+                { text: "You avoid ever discussing yourself with anyone", explanation: "Avoiding discussion about yourself limits the opportunities for the Open Area to grow." },
+            ],
+            correctIndex: 1
+        },
+        {
+            question: "Why is feedback from others especially useful for reducing your Blind Area?",
+            options: [
+                { text: "Because others can observe things about you that you cannot see from your own perspective", explanation: "Correct. An outside perspective can reveal what your own vantage point misses." },
+                { text: "Because others' opinions are always more accurate than your own", explanation: "Others' opinions can be useful, but they aren't automatically more accurate in every case." },
+                { text: "Because feedback has nothing to do with self-awareness", explanation: "Feedback from others is directly connected to expanding self-awareness." },
+                { text: "Because it lets you avoid ever reflecting on yourself", explanation: "Feedback works best alongside your own reflection, not as a replacement for it." },
+            ],
+            correctIndex: 0
+        },
+        {
+            question: "Why might a person hesitate to reduce their Hidden Area, even when it could help their relationships?",
+            options: [
+                { text: "Because sharing personal information is always completely risk-free", explanation: "Sharing personal information does carry some real emotional risk, which is part of the hesitation." },
+                { text: "Because vulnerability can feel uncomfortable or risky, even when it builds trust", explanation: "Correct. The discomfort of vulnerability is a common, understandable reason people hold back." },
+                { text: "Because it's illegal to share personal information", explanation: "There's no legal barrier involved in personal self-disclosure." },
+                { text: "Because Hidden Area information is always trivial and unimportant", explanation: "Hidden Area information can be quite significant, which is often exactly why it feels risky to share." },
+            ],
+            correctIndex: 1
+        },
+        {
+            question: "Reflecting on your own Johari Window, which question best helps you identify your Hidden Area?",
+            options: [
+                { text: "\"What do I know about myself that I haven't told the people close to me?\"", explanation: "Correct. This question specifically targets things you know but haven't disclosed to others." },
+                { text: "\"What do other people already know about me?\"", explanation: "This question is aimed at the Open or Blind Area, not the Hidden Area." },
+                { text: "\"What do neither I nor anyone else know about me yet?\"", explanation: "This question targets the Unknown Area, not the Hidden Area." },
+                { text: "\"What traits do I share openly with everyone?\"", explanation: "This question describes the Open Area, not the Hidden Area." },
+            ],
+            correctIndex: 0
+        },
+        {
+            question: "Reflecting on your own Johari Window, which question best helps you identify your Blind Area?",
+            options: [
+                { text: "\"What have people close to me mentioned about my behavior that surprised me?\"", explanation: "Correct. Surprising feedback from others is a direct clue to what's in your Blind Area." },
+                { text: "\"What private information am I keeping to myself?\"", explanation: "This question targets the Hidden Area, not the Blind Area." },
+                { text: "\"What talents have I never had the chance to discover?\"", explanation: "This question targets the Unknown Area, not the Blind Area." },
+                { text: "\"What do I already openly share with everyone?\"", explanation: "This question describes the Open Area, not the Blind Area." },
+            ],
+            correctIndex: 0
+        },
+        {
+            question: "Which practice would most directly help someone discover parts of their Unknown Area?",
+            options: [
+                { text: "Sticking strictly to a familiar daily routine", explanation: "A familiar routine rarely surfaces anything new about a person." },
+                { text: "Trying unfamiliar activities or situations that push outside their comfort zone", explanation: "Correct. New, unfamiliar situations are one of the main ways previously unknown traits get revealed." },
+                { text: "Avoiding any form of self-reflection", explanation: "Avoiding reflection limits the chance to notice anything newly discovered." },
+                { text: "Refusing to ever ask for feedback", explanation: "Refusing feedback mainly affects the Blind Area, but doesn't help surface the Unknown Area either." },
+            ],
+            correctIndex: 1
+        },
+        {
+            question: "What is a balanced way to think about all four areas of the Johari Window over time?",
+            options: [
+                { text: "Try to eliminate the Hidden and Unknown Areas completely and instantly", explanation: "Completely eliminating these areas isn't realistic or necessary; some privacy and unknown potential are normal." },
+                { text: "Understand that all four areas naturally shift in size as you grow, disclose, and receive feedback", explanation: "Correct. A person's window naturally shifts through ongoing growth, disclosure, and feedback." },
+                { text: "Assume the four areas never change once established", explanation: "The four areas are expected to change as a person grows and learns more about themselves." },
+                { text: "Focus only on the Open Area and ignore the rest", explanation: "All four areas offer useful insight, not just the Open Area." },
+            ],
+            correctIndex: 1
+        },
+        {
+            question: "What is the overall benefit of understanding your own Johari Window?",
+            options: [
+                { text: "It gives you a way to grow self-awareness through both self-disclosure and outside feedback", explanation: "Correct. The core benefit is a structured way to grow self-awareness using both disclosure and feedback." },
+                { text: "It allows you to permanently hide all personal information from others", explanation: "The model actually encourages appropriately opening up, not permanently hiding everything." },
+                { text: "It replaces the need for any other self-awareness practice", explanation: "The Johari Window works well alongside other self-awareness practices, not as a full replacement." },
+                { text: "It only applies to workplace relationships", explanation: "The framework applies to personal relationships as well as professional ones." },
+            ],
+            correctIndex: 0
+        },
+    ];
+
+    const QUESTIONS_PER_QUIZ = 10;
+
+    let quizState = {
+        questions: [],
+        currentIndex: 0,
+        score: 0,
+        answered: false
+    };
+
+    /* =========================================================
+       INIT
+       ========================================================= */
+    document.addEventListener('DOMContentLoaded', () => {
+        renderKnowledge();
+    });
+
+    /* =========================================================
+       KNOWLEDGE TAB RENDER
+       ========================================================= */
+    function renderKnowledge() {
+        const defEl = document.getElementById('knowledge-def');
+        defEl.style.opacity = 0;
+        defEl.textContent = selfDiscoveryContent.definition;
+        requestAnimationFrame(() => {
+            defEl.style.transition = 'opacity 0.6s ease';
+            defEl.style.opacity = 1;
+        });
+
+        const grid = document.getElementById('pillars-grid');
+        grid.innerHTML = selfDiscoveryContent.pillars.map((p, i) => `
+            <div class="pillar-card" style="animation: fadeInUp 0.5s var(--ease-smooth) ${i * 0.08}s backwards;">
+                <h3>${p.title}</h3>
+                <p>${p.text}</p>
+            </div>
+        `).join('');
+    }
+
+    /* =========================================================
+       QUIZ LOGIC
+       ========================================================= */
+    function shuffleArray(arr) {
+        const a = [...arr];
+        for (let i = a.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [a[i], a[j]] = [a[j], a[i]];
+        }
+        return a;
+    }
+
+    function startQuiz() {
+        const picked = shuffleArray(quizBank).slice(0, QUESTIONS_PER_QUIZ);
+
+        quizState.questions = picked.map(q => {
+            const optionsWithFlag = q.options.map((opt, i) => ({
+                text: opt.text,
+                explanation: opt.explanation,
+                isCorrect: i === q.correctIndex
+            }));
+            return {
+                question: q.question,
+                options: shuffleArray(optionsWithFlag)
+            };
+        });
+
+        quizState.currentIndex = 0;
+        quizState.score = 0;
+
+        document.getElementById('quiz-container').style.display = 'block';
+        document.getElementById('result-screen').style.display = 'none';
+        document.getElementById('total-questions').textContent = QUESTIONS_PER_QUIZ;
+        document.getElementById('score').textContent = 0;
+
+        renderQuestion();
+    }
+
+    function renderQuestion() {
+        const total = quizState.questions.length;
+        const idx = quizState.currentIndex;
+        const q = quizState.questions[idx];
+
+        const quizContainer = document.getElementById('quiz-container');
+        quizContainer.style.opacity = 0;
+        quizContainer.style.transform = 'translateY(10px)';
+
+        setTimeout(() => {
+            document.getElementById('current-question').textContent = idx + 1;
+            document.getElementById('progress-bar').style.width = `${(idx / total) * 100}%`;
+            document.getElementById('question-text').textContent = q.question;
+
+            const list = document.getElementById('options-list');
+            list.innerHTML = '';
+            q.options.forEach((opt, i) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.style.animation = `fadeInUp 0.4s var(--ease-smooth) ${i * 0.06}s backwards`;
+                btn.textContent = opt.text;
+                btn.onclick = () => selectOption(i);
+                list.appendChild(btn);
+            });
+
+            const explBox = document.getElementById('explanation-box');
+            explBox.className = 'explanation-box';
+            explBox.style.display = 'none';
+            explBox.innerHTML = '';
+
+            document.getElementById('next-btn').style.display = 'none';
+            quizState.answered = false;
+
+            requestAnimationFrame(() => {
+                quizContainer.style.opacity = 1;
+                quizContainer.style.transform = 'translateY(0)';
+            });
+        }, 180);
+    }
+
+    function selectOption(selectedIdx) {
+        if (quizState.answered) return;
+        quizState.answered = true;
+
+        const q = quizState.questions[quizState.currentIndex];
+        const selectedOpt = q.options[selectedIdx];
+        const correctIdx = q.options.findIndex(o => o.isCorrect);
+        const isCorrect = selectedOpt.isCorrect;
+
+        const buttons = document.querySelectorAll('#options-list .option-btn');
+        buttons.forEach((btn, i) => {
+            btn.disabled = true;
+            if (i === correctIdx) btn.classList.add('correct');
+            else if (i === selectedIdx) btn.classList.add('incorrect');
+        });
+
+        if (isCorrect) {
+            quizState.score++;
+            const scoreEl = document.getElementById('score');
+            scoreEl.textContent = quizState.score;
+            scoreEl.style.animation = 'none';
+            void scoreEl.offsetWidth;
+            scoreEl.style.animation = 'scorePop 0.4s var(--ease-bounce)';
+        }
+
+        const explBox = document.getElementById('explanation-box');
+        explBox.classList.add(isCorrect ? 'show-correct' : 'show-incorrect');
+        explBox.style.display = 'block';
+        explBox.innerHTML = `<strong>${isCorrect ? '✅ Correct!' : '❌ Not quite.'}</strong><br>${selectedOpt.explanation}`;
+
+        const nextBtn = document.getElementById('next-btn');
+        const isLast = quizState.currentIndex === quizState.questions.length - 1;
+        nextBtn.textContent = isLast ? 'View Results' : 'Continue';
+        nextBtn.style.display = 'inline-block';
+        nextBtn.style.animation = 'fadeInUp 0.4s var(--ease-smooth)';
+    }
+
+    function nextQuestion() {
+        quizState.currentIndex++;
+        if (quizState.currentIndex >= quizState.questions.length) {
+            showResults();
+        } else {
+            renderQuestion();
+        }
+    }
+
+    function showResults() {
+        document.getElementById('progress-bar').style.width = '100%';
+
+        const quizContainer = document.getElementById('quiz-container');
+        quizContainer.style.opacity = 0;
+
+        setTimeout(() => {
+            quizContainer.style.display = 'none';
+
+            const resultScreen = document.getElementById('result-screen');
+            resultScreen.style.display = 'block';
+            resultScreen.style.opacity = 0;
+            resultScreen.style.transform = 'scale(0.96)';
+
+            const total = quizState.questions.length;
+            const score = quizState.score;
+            const pct = score / total;
+
+            document.getElementById('final-score').textContent = `${score}/${total}`;
+
+            let stars, feedback;
+            if (pct === 1) {
+                stars = '⭐⭐⭐⭐⭐';
+                feedback = "Outstanding! You have a strong, honest understanding of the Johari Window.";
+            } else if (pct >= 0.8) {
+                stars = '⭐⭐⭐⭐';
+                feedback = "Great job! You clearly grasp most of the key ideas — just a few spots to revisit.";
+            } else if (pct >= 0.6) {
+                stars = '⭐⭐⭐';
+                feedback = "Solid effort! Review the Essential Knowledge tab to sharpen a few concepts.";
+            } else if (pct >= 0.4) {
+                stars = '⭐⭐';
+                feedback = "You're getting there — go back through the theory before trying again.";
+            } else {
+                stars = '⭐';
+                feedback = "Don't worry — growing self-awareness through the Johari Window is a process. Revisit the knowledge tab and try again.";
+            }
+
+            document.getElementById('star-rating').textContent = stars;
+            document.getElementById('feedback-text').textContent = feedback;
+
+            requestAnimationFrame(() => {
+                resultScreen.style.opacity = 1;
+                resultScreen.style.transform = 'scale(1)';
+            });
+        }, 400);
+    }
+
+    function resetQuiz() {
+        const resultScreen = document.getElementById('result-screen');
+        resultScreen.style.opacity = 0;
+        setTimeout(() => {
+            quizState.questions = [];
+            startQuiz();
+        }, 300);
+    }
+</script>
+
+</body>
+</html>

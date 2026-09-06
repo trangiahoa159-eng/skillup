@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skillup</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- AMBIENT GLOW BACKGROUND -->
+    <div class="ambient-glow-1"></div>
+    <div class="ambient-glow-2"></div>
+
+    <!-- HEADER -->
+    <header class="header">
+        <div class="container header-inner">
+            <a href="index.html" class="logo">
+                <div class="logo-icon">S</div>
+                <span>SkillUp</span>
+            </a>
+            
+            <nav class="nav" id="mainNav">
+                <div class="nav-pill" id="navPill"></div>
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="2.html" class="nav-link active">Skills</a>
+                <a href="3.html" class="nav-link">About</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT AREA -->
+    <main class="container">
+        <!-- HERO TITLE -->
+        <section class="hero-section">
+            <h1 class="hero-title">
+                How well do I <span class="gradient-text">understand & manage</span> myself?
+            </h1>
+            <p class="hero-desc">
+                Select a domain below to explore scenarios and build essential life skills across your personal and social life.
+            </p>
+        </section>
+
+        <!-- 3 RELATIONSHIP CATEGORIES -->
+        <div class="rel-grid">
+            <a href="pages/01.html" class="rel-card card-1">
+                <div class="figure-wrapper">
+                    <span class="figure-icon">🔮</span>
+                </div>
+                <span class="card-subtitle">Category 01</span>
+                <h2 class="card-title">ONESELF</h2>
+                <p class="card-desc">
+                    Skills with yourself — Understand your inner emotions, build self-awareness, and shape your core values.
+                </p>
+                <div class="click-hint">
+                    <span>Explore Now</span> <span>➔</span>
+                </div>
+            </a>
+
+            <a href="pages/02.html" class="rel-card card-2">
+                <div class="figure-wrapper">
+                    <span class="figure-icon">🤍</span>
+                </div>
+                <span class="card-subtitle">Category 02</span>
+                <h2 class="card-title">CLOSE RELATIONSHIPS</h2>
+                <p class="card-desc">
+                    Skills in close relationships — Develop active listening, empathy, and healthy boundaries with family and friends.
+                </p>
+                <div class="click-hint">
+                    <span>Explore Now</span> <span>➔</span>
+                </div>
+            </a>
+
+            <a href="pages/03.html" class="rel-card card-3">
+                <div class="figure-wrapper">
+                    <span class="figure-icon">🌐</span>
+                </div>
+                <span class="card-subtitle">Category 03</span>
+                <h2 class="card-title">SOCIAL</h2>
+                <p class="card-desc">
+                    Skills when stepping into society — Master communication, conflict resolution, and teamwork in broader communities.
+                </p>
+                <div class="click-hint">
+                    <span>Explore Now</span> <span>➔</span>
+                </div>
+            </a>
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="container footer-inner">
+            <div class="footer-brand">
+                <div class="logo-icon logo-icon-sm">S</div>
+                <span>© 2026 SkillUp Platform. All rights reserved.</span>
+            </div>
+            <div class="footer-links">
+                <a href="#" class="footer-link">Privacy Policy</a>
+                <a href="#" class="footer-link">Terms of Service</a>
+                <a href="#" class="footer-link">Contact Us</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- SLIDING NAV PILL SCRIPT -->
+    <script>
+        const nav = document.getElementById('mainNav');
+        const pill = document.getElementById('navPill');
+        const links = nav.querySelectorAll('.nav-link');
+        const activeLink = nav.querySelector('.nav-link.active');
+
+        function movePillTo(element, animate = true) {
+            if (!element || !pill) return;
+            const navRect = nav.getBoundingClientRect();
+            const rect = element.getBoundingClientRect();
+
+            if (!animate) {
+                pill.style.transition = 'none';
+            } else {
+                pill.style.transition = 'transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), width 0.45s cubic-bezier(0.16, 1, 0.3, 1)';
+            }
+
+            pill.style.width = `${rect.width}px`;
+            pill.style.transform = `translateX(${rect.left - navRect.left}px)`;
+
+            if (!animate) {
+                pill.offsetHeight; // Force reflow
+            }
+        }
+
+        // Đặt vị trí ngay lập tức khi trang load xong
+        const initPill = () => movePillTo(activeLink, false);
+        window.addEventListener('DOMContentLoaded', initPill);
+        window.addEventListener('load', initPill);
+        window.addEventListener('resize', initPill);
+
+        // Hiệu ứng trượt mượt khi lướt chuột qua lại
+        links.forEach(link => {
+            link.addEventListener('mouseenter', () => movePillTo(link, true));
+        });
+
+        nav.addEventListener('mouseleave', () => movePillTo(activeLink, true));
+    </script>
+
+
+<!-- SCRIPT TỰ ĐỘNG NHẬN BIẾT HƯỚNG LƯỚT TỚI / LÙI -->
+    <script>
+        document.addEventListener('click', (e) => {
+            const link = e.target.closest('a');
+            if (!link) return;
+            
+            const href = link.getAttribute('href');
+            if (!href || href.startsWith('#') || href.startsWith('http')) return;
+
+            const pageOrder = { 'index.html': 1, '2.html': 2, '3.html': 3 };
+            const currentPath = location.pathname.split('/').pop() || 'index.html';
+            
+            const currentIdx = pageOrder[currentPath] || 1;
+            const targetIdx = pageOrder[href] || 1;
+
+            if (targetIdx < currentIdx) {
+                document.documentElement.classList.add('back-transition');
+            } else {
+                document.documentElement.classList.remove('back-transition');
+            }
+        });
+    </script>
+</body>
+</html>

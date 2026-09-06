@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Goal Setting - Essential Knowledge & Quiz</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Sử dụng phông chữ Poppins cho cảm giác hiện đại -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+
+        :root {
+            --bg-main: #06080F; /* Màu nền tối sâu */
+            --bg-card: #121626; /* Màu thẻ Card */
+            --bg-box: #1A1F35; /* Màu các hộp nhỏ bên trong */
+            --text-main: #F8FAFC;
+            --text-muted: #94A3B8;
+            --accent-primary: #6366F1; /* Màu tím/xanh Indigo */
+            --accent-blue: #3B82F6; /* Xanh lam cho progress bar */
+            --accent-hover: #4F46E5;
+            --border-color: #2E3650;
+            --success: #10B981;
+            --danger: #EF4444;
+            --glow: 0 0 15px rgba(99, 102, 241, 0.4);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            line-height: 1.7;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            max-width: 850px;
+            margin: 50px auto;
+            padding: 0 20px;
+        }
+
+        /* --- HEADER --- */
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .badge {
+            background-color: rgba(99, 102, 241, 0.15);
+            color: #A5B4FC;
+            padding: 6px 18px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 16px;
+            border: 1px solid rgba(99, 102, 241, 0.3);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #FFFFFF;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            font-weight: 300;
+        }
+
+        /* --- TAB NAVIGATOR (Có khung bọc ngoài) --- */
+        .tabs-wrapper {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 10px;
+            display: flex;
+            gap: 10px;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .tab-btn {
+            flex: 1;
+            background: transparent;
+            border: 1px solid transparent;
+            padding: 14px 20px;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            font-family: inherit;
+        }
+
+        .tab-btn:hover {
+            background-color: rgba(255, 255, 255, 0.03);
+            color: var(--text-main);
+        }
+
+        .tab-btn.active {
+            background-color: var(--bg-box);
+            color: #FFFFFF;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--glow);
+        }
+
+        /* --- CONTENT SECTIONS --- */
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- KNOWLEDGE FRAMES --- */
+        .knowledge-box {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .knowledge-box:hover {
+            border-color: rgba(99, 102, 241, 0.5);
+            box-shadow: var(--glow);
+        }
+
+        .knowledge-box h2 {
+            font-size: 1.4rem;
+            margin-bottom: 20px;
+            color: #FFFFFF;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 15px;
+        }
+
+        .knowledge-box h2 i { color: var(--accent-primary); }
+        .knowledge-box p { color: var(--text-muted); margin-bottom: 15px; }
+        .knowledge-box ul { padding-left: 0; list-style: none; }
+        .knowledge-box li {
+            position: relative;
+            padding-left: 30px;
+            margin-bottom: 15px;
+            color: var(--text-muted);
+        }
+        .knowledge-box li::before {
+            content: "\f058";
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            position: absolute;
+            left: 0;
+            top: 2px;
+            color: var(--accent-primary);
+        }
+        .knowledge-box strong { color: var(--text-main); }
+
+        .example-box {
+            background-color: rgba(0, 0, 0, 0.3);
+            padding: 12px 20px;
+            border-left: 3px solid var(--accent-primary);
+            border-radius: 6px;
+            margin: 10px 0;
+            font-size: 0.95rem;
+            color: #A3B1FF;
+            font-style: italic;
+        }
+
+        /* --- QUIZ STYLES (STEP-BY-STEP) --- */
+        .quiz-container {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+
+        .quiz-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .quiz-header h2 { font-size: 1.5rem; }
+        .progress-indicator { color: var(--accent-blue); font-weight: 600; }
+
+        /* Progress Bar */
+        .progress-container {
+            width: 100%;
+            height: 8px;
+            background-color: var(--bg-box);
+            border-radius: 4px;
+            margin-bottom: 30px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 10%; /* Sửa lại đúng 10% cho câu đầu tiên (1/10) */
+            background: linear-gradient(90deg, var(--accent-primary), var(--accent-blue));
+            border-radius: 4px;
+            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+        }
+
+        .question-block { display: none; }
+        .question-block.active { display: block; animation: fadeIn 0.3s; }
+
+        .question-block h4 {
+            font-size: 1.2rem;
+            margin-bottom: 25px;
+            color: var(--text-main);
+            font-weight: 600;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .option-label {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 16px 20px;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: var(--text-muted);
+            background-color: var(--bg-box);
+            font-weight: 500;
+        }
+
+        .option-label:hover {
+            border-color: var(--accent-blue);
+            background-color: rgba(59, 130, 246, 0.05);
+            color: var(--text-main);
+        }
+
+        input[type="radio"] {
+            accent-color: var(--accent-blue);
+            width: 20px;
+            height: 20px;
+            margin: 0;
+            cursor: pointer;
+        }
+
+        /* Nút Next / Submit */
+        .action-btn {
+            background-color: var(--accent-primary);
+            color: white;
+            border: none;
+            padding: 14px 30px;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .action-btn:hover { background-color: var(--accent-hover); box-shadow: var(--glow); }
+        .action-btn:disabled { background-color: #374151; color: #9CA3AF; cursor: not-allowed; box-shadow: none; }
+        
+        .nav-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+        }
+
+        /* --- RESULTS --- */
+        #result-section {
+            display: none;
+            text-align: center;
+            padding: 40px 20px;
+            background-color: var(--bg-card);
+            border: 1px solid var(--accent-blue);
+            border-radius: 16px;
+            margin-top: 40px;
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.2);
+        }
+
+        .score-display {
+            font-size: 4rem;
+            font-weight: 800;
+            color: #FFFFFF;
+            line-height: 1;
+            margin: 20px 0;
+            text-shadow: 0 0 20px rgba(59, 130, 246, 0.6);
+        }
+
+        .feedback-text { font-size: 1.3rem; font-weight: 600; color: var(--success); margin-bottom: 10px; }
+        .feedback-subtext { color: var(--text-muted); }
+        
+        .explanation {
+            margin-top: 15px;
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            display: none;
+        }
+
+        .explanation.incorrect {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+            border-color: rgba(239, 68, 68, 0.3);
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .tabs-wrapper { flex-direction: column; }
+            .quiz-header { flex-direction: column; align-items: flex-start; gap: 10px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <div class="badge"><i class="fa-solid fa-clock"></i> Time Management Sub-skill</div>
+            <h1>Goal Setting</h1>
+            <p class="subtitle">Master the art of defining clear, actionable objectives.</p>
+        </header>
+
+        <!-- TAB NAVIGATOR (Khung chọn Tab) -->
+        <div class="tabs-wrapper">
+            <button class="tab-btn active" onclick="switchTab('knowledge')" id="btn-knowledge">
+                <i class="fa-solid fa-book-open"></i> Essential Knowledge
+            </button>
+            <button class="tab-btn" onclick="switchTab('quiz')" id="btn-quiz">
+                <i class="fa-solid fa-pen-to-square"></i> Knowledge Check
+            </button>
+        </div>
+
+        <!-- TAB 1: ESSENTIAL KNOWLEDGE -->
+        <section class="tab-content active" id="knowledge-tab">
+            <div class="knowledge-box">
+                <h2><i class="fa-solid fa-lightbulb"></i> Understanding Goal Setting</h2>
+                <p>Goal setting is a purposeful and explicit process that starts with identifying a new objective, skill, or project you want to achieve. It bridges the gap between where you are today and where you want to be tomorrow.</p>
+            </div>
+            
+            <div class="knowledge-box">
+                <h2><i class="fa-solid fa-bullseye"></i> The SMART Framework</h2>
+                <p>To move beyond vague wishes, your goals must be structured. The SMART framework is the gold standard:</p>
+                <ul>
+                    <li><strong>Specific:</strong> Clear and unambiguous. 
+                        <div class="example-box">Instead of "I want to be fit", use "I want to run a 5K race."</div>
+                    </li>
+                    <li><strong>Measurable:</strong> You must be able to track your progress with numbers or milestones.
+                        <div class="example-box">"I will read 20 pages every night" vs "I will read more".</div>
+                    </li>
+                    <li><strong>Achievable:</strong> Realistic and attainable within your current constraints.</li>
+                    <li><strong>Relevant:</strong> Matters to you and aligns with your broader life, academic, or career plans.</li>
+                    <li><strong>Time-bound:</strong> Has a strictly defined deadline to create urgency.</li>
+                </ul>
+            </div>
+
+            <div class="knowledge-box">
+                <h2><i class="fa-solid fa-layer-group"></i> Short-term vs. Long-term Goals</h2>
+                <p>Effective goal setting requires balancing your immediate actions with your future vision.</p>
+                <ul>
+                    <li><strong>Long-term Goals (Vision):</strong> These take months or years to achieve. They give you a sense of direction (e.g., "Become a senior web developer in 3 years").</li>
+                    <li><strong>Short-term Goals (Stepping Stones):</strong> These can be achieved in days or weeks. They keep you motivated and provide quick wins along the journey (e.g., "Complete a React course by the end of this month").</li>
+                </ul>
+            </div>
+
+            <div class="knowledge-box">
+                <h2><i class="fa-solid fa-route"></i> Process vs. Outcome Goals</h2>
+                <p>A professional approach to goal setting involves balancing two types of goals:</p>
+                <ul>
+                    <li><strong>Outcome Goals:</strong> The final result you want (e.g., Getting an A+ on the final exam).</li>
+                    <li><strong>Process Goals:</strong> The daily habits required to get there (e.g., Studying focused for 45 minutes every day). <em>Process goals are fully within your control.</em></li>
+                </ul>
+            </div>
+
+            <div class="knowledge-box" style="border-color: rgba(239, 68, 68, 0.4);">
+                <h2><i class="fa-solid fa-triangle-exclamation" style="color: var(--danger);"></i> Common Mistakes</h2>
+                <ul>
+                    <li><strong>Vague Intentions:</strong> Setting goals without specific metrics or deadlines.</li>
+                    <li><strong>Overloading:</strong> Trying to achieve too many big goals at the same time, leading to burnout.</li>
+                    <li><strong>Not Writing Them Down:</strong> Studies show you are 42% more likely to achieve goals if you write them down clearly.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- TAB 2: QUIZ -->
+        <section class="tab-content" id="quiz-tab">
+            <div class="quiz-container">
+                <div class="quiz-header">
+                    <h2>Knowledge Check</h2>
+                    <div class="progress-indicator"><span id="current-q-num">1</span> / 10</div>
+                </div>
+
+                <!-- PROGRESS BAR -->
+                <div class="progress-container">
+                    <div class="progress-bar" id="quiz-progress" style="width: 10%;"></div>
+                </div>
+                
+                <form id="quiz-form">
+                    <div id="questions-wrapper">
+                        <!-- Nội dung sinh tự động -->
+                    </div>
+
+                    <!-- Navigation Buttons -->
+                    <div class="nav-buttons">
+                        <button type="button" class="action-btn" id="next-btn" onclick="nextQuestion()" disabled>
+                            Next Question <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                        <button type="button" class="action-btn" id="submit-btn" onclick="calculateScore()" style="display: none;">
+                            Submit Quiz <i class="fa-solid fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </form>
+
+                <!-- SCORE & RESULT -->
+                <div id="result-section">
+                    <h3 style="color: #A5B4FC;"><i class="fa-solid fa-trophy" style="color: #FBBF24;"></i> Final Score</h3>
+                    <div class="score-display"><span id="score-text">0</span>/10</div>
+                    <div class="feedback-text" id="feedback-main"></div>
+                    <div class="feedback-subtext" id="feedback-sub"></div>
+                    
+                    <button type="button" class="action-btn" style="margin-top: 20px; background-color: var(--accent-blue);" onclick="location.reload()">Try Another Quiz</button>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            
+            document.getElementById(tabId + '-tab').classList.add('active');
+            document.getElementById('btn-' + tabId).classList.add('active');
+        }
+
+        const questionBank = [
+            { q: "What does the 'S' in SMART goals stand for?", options: { A: "Standard", B: "Specific", C: "Simple", D: "Significant" }, correct: "B", ansText: "Specific" },
+            { q: "Which of the following is the best example of a Measurable goal?", options: { A: "I want to be healthier.", B: "I will run 5 kilometers in under 30 minutes by June 1st.", C: "I will try to read more books this year.", D: "I want to save a lot of money." }, correct: "B", ansText: "I will run 5 kilometers in under 30 minutes by June 1st." },
+            { q: "Why are Short-term goals important?", options: { A: "They completely replace the need for long-term goals.", B: "They are impossible to track.", C: "They act as stepping stones and provide motivation.", D: "They require zero effort." }, correct: "C", ansText: "They act as stepping stones and provide motivation." },
+            { q: "Which of these is an example of a 'Process Goal'?", options: { A: "Getting a promotion at work.", B: "Studying for 45 minutes every evening.", C: "Winning the championship game.", D: "Earning an A+ in mathematics." }, correct: "B", ansText: "Studying for 45 minutes every evening." },
+            { q: "According to studies, writing down your goals increases the chance of achieving them by what percentage?", options: { A: "10%", B: "25%", C: "42%", D: "99%" }, correct: "C", ansText: "42%" },
+            { q: "What does the 'M' in SMART goals stand for?", options: { A: "Meaningful", B: "Manageable", C: "Measurable", D: "Motivating" }, correct: "C", ansText: "Measurable" },
+            { q: "What does the 'A' in SMART goals stand for?", options: { A: "Actionable", B: "Achievable", C: "Absolute", D: "Active" }, correct: "B", ansText: "Achievable" },
+            { q: "What does the 'R' in SMART goals stand for?", options: { A: "Realistic", B: "Rapid", C: "Relevant", D: "Routine" }, correct: "C", ansText: "Relevant" },
+            { q: "What does the 'T' in SMART goals stand for?", options: { A: "Time-bound", B: "Total", C: "Tough", D: "Targeted" }, correct: "A", ansText: "Time-bound" },
+            { q: "Which of the following is a long-term goal example?", options: { A: "Finish reading Chapter 1 today.", B: "Earn a bachelor's degree in 4 years.", C: "Send an email this morning.", D: "Complete a 10-minute workout." }, correct: "B", ansText: "Earn a bachelor's degree in 4 years." },
+            { q: "What is an Outcome Goal primarily focused on?", options: { A: "The final result or achievement", B: "The daily steps taken", C: "The obstacles faced", D: "The emotional state" }, correct: "A", ansText: "The final result or achievement" },
+            { q: "Why should goals be realistic and achievable?", options: { A: "To prevent frustration and discouragement", B: "To make them take longer", C: "To avoid doing any work", D: "To keep them secret" }, correct: "A", ansText: "To prevent frustration and discouragement" },
+            { q: "Which tool helps maintain momentum when facing large goals?", options: { A: "Breaking them into short-term milestones", B: "Ignoring deadlines", C: "Setting vague targets", D: "Working 24 hours a day" }, correct: "A", ansText: "Breaking them into short-term milestones" },
+            { q: "What is a major risk of overloading yourself with too many big goals?", options: { A: "Burnout and lack of focus", B: "Instant success", C: "Extra free time", D: "Better memory" }, correct: "A", ansText: "Burnout and lack of focus" },
+            { q: "Which goal has the best time-bound definition?", options: { A: "Someday I will finish this project.", B: "I will submit the assignment by Friday at 5 PM.", C: "I will do it later.", D: "Soon." }, correct: "B", ansText: "I will submit the assignment by Friday at 5 PM." },
+            { q: "How do process goals differ from outcome goals?", options: { A: "Process goals focus on daily habits within your control.", B: "Process goals focus only on the trophy.", C: "Process goals never change.", D: "Process goals require no planning." }, correct: "A", ansText: "Process goals focus on daily habits within your control." },
+            { q: "What is the primary benefit of tracking goal progress?", options: { A: "It allows you to adjust and stay accountable", B: "It slows down your work", C: "It creates unnecessary stress", D: "It replaces the need for action" }, correct: "A", ansText: "It allows you to adjust and stay accountable" },
+            { q: "Which statement best describes a vague goal?", options: { A: "I want to lose 5 kilograms in two months.", B: "I want to get better at things.", C: "I will practice guitar for 30 minutes daily.", D: "I will read 10 pages per night." }, correct: "B", ansText: "I want to get better at things." },
+            { q: "Why is emotional alignment important in goal setting?", options: { A: "It ensures the goal actually matters to you (Relevant)", B: "It makes the goal harder", C: "It guarantees zero obstacles", D: "It replaces hard work" }, correct: "A", ansText: "It ensures the goal actually matters to you (Relevant)" },
+            { q: "What does 'bridge the gap' mean in the context of goals?", options: { A: "Connecting where you are now with where you want to be", B: "Building actual bridges", C: "Taking a vacation", D: "Stopping all progress" }, correct: "A", ansText: "Connecting where you are now with where you want to be" },
+            { q: "Which of these represents a poorly structured goal?", options: { A: "Write 500 words of my essay every Tuesday.", B: "Do my best.", C: "Save $200 by next month.", D: "Run 3 times a week." }, correct: "B", ansText: "Do my best." },
+            { q: "What is a milestone?", options: { A: "A checkpoint or marker along the way to a larger goal", B: "The final finish line only", C: "A type of failure", D: "A random distraction" }, correct: "A", ansText: "A checkpoint or marker along the way to a larger goal" },
+            { q: "How do short-term goals support long-term goals?", options: { A: "They build consistent habits and steady progress", B: "They distract from the main target", C: "They make long-term goals obsolete", D: "They shorten life span" }, correct: "A", ansText: "They build consistent habits and steady progress" },
+            { q: "What is self-efficacy in goal achievement?", options: { A: "Belief in one's ability to succeed and reach goals", B: "Relying entirely on others", C: "Luck", D: "Ignoring feedback" }, correct: "A", ansText: "Belief in one's ability to succeed and reach goals" },
+            { q: "Why are deadlines crucial in goal setting?", options: { A: "They create healthy urgency and prevent procrastination", B: "They cause panic", C: "They are optional decorations", D: "They slow down production" }, correct: "A", ansText: "They create healthy urgency and prevent procrastination" },
+            { q: "What should you do if an obstacle blocks your goal?", options: { A: "Review, adapt your strategy, and keep moving", B: "Give up immediately", C: "Pretend the obstacle doesn't exist", D: "Blame everyone else" }, correct: "A", ansText: "Review, adapt your strategy, and keep moving" },
+            { q: "Which is an example of a habit-based goal?", options: { A: "Meditate for 10 minutes every morning", B: "Win an international award", C: "Become rich overnight", D: "Pass an exam without studying" }, correct: "A", ansText: "Meditate for 10 minutes every morning" },
+            { q: "What does accountability partner do?", options: { A: "Helps keep you on track and encourages consistency", B: "Does all the work for you", C: "Judges your failures", D: "Changes your goals" }, correct: "A", ansText: "Helps keep you on track and encourages consistency" },
+            { q: "Why is clarity essential when writing goals?", options: { A: "It removes ambiguity so you know exact actions to take", B: "It makes text look longer", C: "It confuses competitors", D: "It has no real impact" }, correct: "A", ansText: "It removes ambiguity so you know exact actions to take" },
+            { q: "Which of these is a psychological benefit of achieving micro-goals?", options: { A: "Release of dopamine and boost in motivation", B: "Instant fatigue", C: "Loss of interest", D: "Overconfidence" }, correct: "A", ansText: "Release of dopamine and boost in motivation" },
+            { q: "What does 'Flexibility in planning' mean?", options: { A: "Adjusting tactics while keeping the ultimate vision intact", B: "Changing your goals every hour", C: "Never having a schedule", D: "Giving up when things get hard" }, correct: "A", ansText: "Adjusting tactics while keeping the ultimate vision intact" },
+            { q: "How can visualization aid goal setting?", options: { A: "It mentally prepares you for success and actions required", B: "It replaces physical practice entirely", C: "It wastes valuable time", D: "It lowers expectations" }, correct: "A", ansText: "It mentally prepares you for success and actions required" },
+            { q: "What is the danger of setting goals that are too easy?", options: { A: "Lack of challenge and personal growth", B: "Severe burnout", C: "Too much stress", D: "Financial ruin" }, correct: "A", ansText: "Lack of challenge and personal growth" },
+            { q: "What role do values play in goal setting?", options: { A: "They ensure your goals match what truly matters to you", B: "They complicate simple tasks", C: "They have no connection", D: "They dictate your shoe size" }, correct: "A", ansText: "They ensure your goals match what truly matters to you" },
+            { q: "What is a feedback loop in goal management?", options: { A: "Reviewing performance regularly to make improvements", B: "Repeating the same mistake", C: "Complaining about results", D: "Ignoring data" }, correct: "A", ansText: "Reviewing performance regularly to make improvements" },
+            { q: "Why do people often abandon their goals?", options: { A: "Lack of clear planning, unrealistic expectations, or losing why", B: "Too much success", C: "Sleeping enough", D: "Drinking water" }, correct: "A", ansText: "Lack of clear planning, unrealistic expectations, or losing why" },
+            { q: "What is the benefit of public goal setting?", options: { A: "Increased social commitment and accountability", B: "Unwanted criticism only", C: "Guaranteed failure", D: "No difference" }, correct: "A", ansText: "Increased social commitment and accountability" },
+            { q: "How does time-boxing help achieve goals?", options: { A: "Allocating fixed time blocks prevents distraction and builds focus", B: "It restricts freedom completely", C: "It makes time stand still", D: "It causes delays" }, correct: "A", ansText: "Allocating fixed time blocks prevents distraction and builds focus" },
+            { q: "What is the difference between a wish and a goal?", options: { A: "A goal has a concrete action plan and commitment", B: "There is no difference", C: "Wishes are more realistic", D: "Goals require no effort" }, correct: "A", ansText: "A goal has a concrete action plan and commitment" },
+            { q: "Why should you celebrate small wins?", options: { A: "To reinforce positive habits and maintain high morale", B: "To stop working entirely", C: "To waste time", D: "To brag to others" }, correct: "A", ansText: "To reinforce positive habits and maintain high morale" },
+            { q: "What does 'Prioritization' mean in goal management?", options: { A: "Focusing on high-impact goals first", B: "Doing everything at once", C: "Ignoring important tasks", D: "Random selection" }, correct: "A", ansText: "Focusing on high-impact goals first" },
+            { q: "How do environmental cues assist in goal pursuit?", options: { A: "They trigger positive routines and minimize friction", B: "They create distractions", C: "They confuse your mind", D: "They have no effect" }, correct: "A", ansText: "They trigger positive routines and minimize friction" },
+            { q: "What is a contingency plan?", options: { A: "A backup plan for when things don't go as expected", B: "Giving up immediately", C: "Ignoring risks", D: "Changing the goal completely" }, correct: "A", ansText: "A backup plan for when things don't go as expected" },
+            { q: "What is the core purpose of a review session at the end of the week?", options: { A: "To evaluate progress and adjust next week's actions", B: "To punish yourself for mistakes", C: "To forget past work", D: "To celebrate all week" }, correct: "A", ansText: "To evaluate progress and adjust next week's actions" },
+            { q: "Why are financial goals often tied to personal freedom?", options: { A: "Because resources provide choices and security", B: "Money is the only thing that matters", C: "They are unrelated", D: "Money causes stress only" }, correct: "A", ansText: "Because resources provide choices and security" },
+            { q: "What does 'Intrinsic motivation' mean?", options: { A: "Driven by internal satisfaction and personal growth", B: "Driven purely by money or rewards", C: "Forced by others", D: "Accidental" }, correct: "A", ansText: "Driven by internal satisfaction and personal growth" },
+            { q: "What does 'Extrinsic motivation' mean?", options: { A: "Driven by external rewards, grades, or recognition", B: "Driven by inner passion", C: "Internal peace", D: "No motivation at all" }, correct: "A", ansText: "Driven by external rewards, grades, or recognition" },
+            { q: "How does journaling support goal setting?", options: { A: "It clarifies thoughts, tracks reflections, and documents progress", B: "It takes up ink", C: "It delays work", D: "It serves no purpose" }, correct: "A", ansText: "It clarifies thoughts, tracks reflections, and documents progress" },
+            { q: "What is the ultimate outcome of mastering goal setting?", options: { A: "Greater personal effectiveness, clarity, and life satisfaction", B: "Working 20 hours a day", C: "Eliminating all leisure time", D: "Never facing problems" }, correct: "A", ansText: "Greater personal effectiveness, clarity, and life satisfaction" }
+        ];
+
+        let quizQuestions = [];
+        const totalQuestions = 10;
+        let currentQuestion = 1;
+        let correctAnswersMap = {};
+
+        function initQuiz() {
+            const shuffled = [...questionBank].sort(() => 0.5 - Math.random());
+            quizQuestions = shuffled.slice(0, totalQuestions);
+
+            const wrapper = document.getElementById('questions-wrapper');
+            wrapper.innerHTML = '';
+            correctAnswersMap = {};
+
+            quizQuestions.forEach((item, index) => {
+                const qNum = index + 1;
+                const qKey = 'q' + qNum;
+                correctAnswersMap[qKey] = { ans: item.correct, text: item.ansText };
+
+                let optionsHtml = '';
+                for (const [key, val] of Object.entries(item.options)) {
+                    optionsHtml += `
+                        <label class="option-label">
+                            <input type="radio" name="${qKey}" value="${key}" onchange="enableNext(${qNum})"> ${key}) ${val}
+                        </label>`;
+                }
+
+                const blockHtml = `
+                    <div class="question-block ${qNum === 1 ? 'active' : ''}" id="q-block-${qNum}">
+                        <h4>${qNum}. ${item.q}</h4>
+                        <div class="options">
+                            ${optionsHtml}
+                        </div>
+                        <div class="explanation" id="exp-${qKey}"></div>
+                    </div>`;
+                wrapper.innerHTML += blockHtml;
+            });
+
+            document.getElementById('quiz-progress').style.width = '10%';
+            document.getElementById('current-q-num').innerText = '1';
+        }
+
+        window.addEventListener('DOMContentLoaded', initQuiz);
+
+        function enableNext(qNum) {
+            if (qNum === totalQuestions) {
+                document.getElementById('submit-btn').disabled = false;
+            } else {
+                document.getElementById('next-btn').disabled = false;
+            }
+        }
+
+        function updateProgress() {
+            const percent = (currentQuestion / totalQuestions) * 100;
+            document.getElementById('quiz-progress').style.width = percent + '%';
+        }
+
+        function nextQuestion() {
+            document.getElementById('q-block-' + currentQuestion).classList.remove('active');
+            currentQuestion++;
+            updateProgress();
+            
+            document.getElementById('q-block-' + currentQuestion).classList.add('active');
+            document.getElementById('current-q-num').innerText = currentQuestion;
+            
+            if (currentQuestion === totalQuestions) {
+                document.getElementById('next-btn').style.display = 'none';
+                document.getElementById('submit-btn').style.display = 'inline-flex';
+                document.getElementById('submit-btn').disabled = true; 
+            } else {
+                document.getElementById('next-btn').disabled = true; 
+            }
+        }
+
+        function calculateScore() {
+            const form = document.getElementById('quiz-form');
+            const formData = new FormData(form);
+            let score = 0;
+
+            for(let i=1; i<=totalQuestions; i++) {
+                const questionName = 'q' + i;
+                const selected = formData.get(questionName);
+                const correct = correctAnswersMap[questionName];
+                const expDiv = document.getElementById('exp-' + questionName);
+                
+                // Hiển thị phần giải thích / đáp án đúng ngay khi nộp bài
+                expDiv.style.display = 'block';
+
+                if (selected === correct.ans) {
+                    score++;
+                    expDiv.className = 'explanation';
+                    expDiv.innerHTML = '<i class="fa-solid fa-check-circle"></i> Correct!';
+                } else {
+                    expDiv.className = 'explanation incorrect';
+                    expDiv.innerHTML = '<i class="fa-solid fa-xmark-circle"></i> Incorrect. Correct answer: <strong>' + correct.text + '</strong>';
+                }
+            }
+
+            document.querySelector('.nav-buttons').style.display = 'none';
+            document.querySelectorAll('.question-block').forEach(q => {
+                q.classList.add('active');
+                q.style.marginBottom = '40px';
+                q.style.borderBottom = '1px solid var(--border-color)';
+                q.style.paddingBottom = '30px';
+                
+                const inputs = q.querySelectorAll('input[type="radio"]');
+                inputs.forEach(input => input.disabled = true);
+            });
+            document.querySelector('.quiz-header').style.display = 'none';
+            document.querySelector('.progress-container').style.display = 'none';
+
+            const resultSection = document.getElementById('result-section');
+            document.getElementById('score-text').innerText = score;
+            const feedbackMain = document.getElementById('feedback-main');
+            const feedbackSub = document.getElementById('feedback-sub');
+
+            if (score === 10) {
+                feedbackMain.innerText = 'Perfect Score! 🌟';
+                feedbackSub.innerText = 'You have mastered the Goal Setting concepts.';
+            } else if (score >= 6) {
+                feedbackMain.innerText = 'Good Job! 👍';
+                feedbackSub.innerText = 'Solid understanding, but review the details.';
+                feedbackMain.style.color = '#FBBF24';
+            } else {
+                feedbackMain.innerText = 'Keep Practicing 📚';
+                feedbackSub.innerText = 'Consider reviewing the Essential Knowledge tab.';
+                feedbackMain.style.color = 'var(--danger)';
+            }
+
+            resultSection.style.display = 'block';
+        }
+    </script>
+</body>
+</html>
+

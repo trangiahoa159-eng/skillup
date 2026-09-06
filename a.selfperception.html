@@ -1,0 +1,1584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkillUp - Self-Perception</title>
+    <!-- Google Inter Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-dark: #05070f;
+            --glass-bg: rgba(15, 22, 41, 0.65);
+            --glass-card: rgba(255, 255, 255, 0.03);
+            --glass-card-hover: rgba(255, 255, 255, 0.07);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --glass-border-light: rgba(255, 255, 255, 0.25);
+
+            --accent-purple: #6366f1;
+            --accent-indigo: #818cf8;
+            --accent-cyan: #38bdf8;
+            --accent-pink: #ec4899;
+
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --text-dim: #64748b;
+
+            --correct-bg: rgba(34, 197, 94, 0.15);
+            --correct-border: #22c55e;
+            --incorrect-bg: rgba(239, 68, 68, 0.15);
+            --incorrect-border: #ef4444;
+
+            --ease-smooth: cubic-bezier(0.16, 1, 0.3, 1);
+            --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            background-image:
+                radial-gradient(circle at 50% 0%, rgba(99, 102, 241, 0.15), transparent 70%),
+                radial-gradient(circle at 80% 80%, rgba(56, 189, 248, 0.1), transparent 50%);
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 2.5rem 1rem 0 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Ambient Glow Blobs - Slow Floating */
+        .ambient-glow {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(120px);
+            z-index: -1;
+            pointer-events: none;
+            opacity: 0.5;
+            will-change: transform;
+        }
+        .glow-1 {
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.8) 0%, rgba(99, 102, 241, 0) 70%);
+            top: -150px;
+            left: -150px;
+            animation: floatGlow1 22s infinite alternate ease-in-out;
+        }
+        .glow-2 {
+            width: 550px;
+            height: 550px;
+            background: radial-gradient(circle, rgba(6, 182, 212, 0.7) 0%, rgba(6, 182, 212, 0) 70%);
+            bottom: -200px;
+            right: -150px;
+            animation: floatGlow2 26s infinite alternate ease-in-out;
+        }
+        .glow-3 {
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(236, 72, 153, 0.4) 0%, rgba(236, 72, 153, 0) 70%);
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: floatGlow3 18s infinite alternate ease-in-out;
+        }
+
+        @keyframes floatGlow1 {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(80px, 60px) scale(1.2); }
+        }
+        @keyframes floatGlow2 {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(-70px, -50px) scale(1.15); }
+        }
+        @keyframes floatGlow3 {
+            0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0.2; }
+            100% { transform: translate(-40%, -60%) scale(1.2); opacity: 0.5; }
+        }
+
+        .container {
+            max-width: 880px;
+            width: 100%;
+            z-index: 1;
+            flex: 1;
+        }
+
+        /* Back Link */
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            color: #ffffff;
+            text-decoration: none;
+            margin-bottom: 2rem;
+            font-size: 0.92rem;
+            font-weight: 600;
+            padding: 0.65rem 1.4rem;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(56, 189, 248, 0.2));
+            border: 1px solid rgba(129, 140, 248, 0.4);
+            border-radius: 30px;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            transition: all 0.5s var(--ease-smooth);
+            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        .back-link::after {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
+            transition: left 0.7s var(--ease-smooth);
+        }
+        .back-link:hover::after {
+            left: 100%;
+        }
+        .back-link:hover {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.45), rgba(56, 189, 248, 0.45));
+            border-color: rgba(255, 255, 255, 0.7);
+            transform: translateX(-6px) scale(1.02);
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.5);
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+            animation: fadeInDown 0.8s var(--ease-smooth);
+        }
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .header-badge {
+            display: inline-block;
+            padding: 0.4rem 1.1rem;
+            font-size: 0.78rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: #e0e7ff;
+            background: rgba(99, 102, 241, 0.2);
+            border: 1px solid rgba(129, 140, 248, 0.4);
+            border-radius: 30px;
+            margin-bottom: 1rem;
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.3);
+        }
+
+        .brand-title {
+            display: inline-block;
+            font-size: 2.8rem;
+            font-weight: 900;
+            letter-spacing: -0.03em;
+            margin-bottom: 0.6rem;
+            background: linear-gradient(135deg, #ffffff 20%, #c7d2fe 60%, #38bdf8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            cursor: pointer;
+            transition: transform 0.4s var(--ease-bounce), filter 0.4s ease;
+            position: relative;
+        }
+        .brand-title:hover {
+            transform: scale(1.03);
+            filter: drop-shadow(0 0 15px rgba(99, 102, 241, 0.6));
+        }
+
+        .header p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            font-weight: 400;
+        }
+
+        /* TAB NAVIGATION SLIDER */
+        .tab-navigation {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2.2rem;
+            transition: all 0.7s var(--ease-smooth);
+        }
+
+        .tab-btn {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2.2rem 1.5rem;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            color: var(--text-muted);
+            cursor: pointer;
+            backdrop-filter: blur(30px) saturate(180%);
+            -webkit-backdrop-filter: blur(30px) saturate(180%);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+            transition: all 0.5s var(--ease-smooth);
+            text-align: center;
+            gap: 0.9rem;
+            overflow: hidden;
+        }
+
+        .tab-btn::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
+            transition: left 0.8s var(--ease-smooth);
+        }
+        .tab-btn:hover::before {
+            left: 100%;
+        }
+
+        .tab-btn svg {
+            width: 40px;
+            height: 40px;
+            transition: all 0.5s var(--ease-bounce);
+            color: var(--accent-indigo);
+            filter: drop-shadow(0 0 8px rgba(129, 140, 248, 0.4));
+        }
+
+        .tab-btn-text {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        .tab-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #ffffff;
+            transition: color 0.4s ease;
+        }
+
+        .tab-desc {
+            font-size: 0.88rem;
+            color: var(--text-muted);
+            font-weight: 400;
+            max-width: 280px;
+            transition: all 0.4s var(--ease-smooth);
+            opacity: 1;
+            max-height: 60px;
+        }
+
+        .tab-btn:hover {
+            transform: translateY(-8px) scale(1.02);
+            border-color: rgba(129, 140, 248, 0.5);
+            background: rgba(30, 41, 67, 0.7);
+            box-shadow: 0 20px 45px rgba(99, 102, 241, 0.35), 0 0 20px rgba(56, 189, 248, 0.2);
+        }
+
+        .tab-btn:hover svg {
+            transform: scale(1.2) rotate(-5deg);
+            color: var(--accent-cyan);
+            filter: drop-shadow(0 0 12px rgba(56, 189, 248, 0.8));
+        }
+
+        .tab-navigation.shrunk {
+            display: flex;
+            background: rgba(10, 15, 30, 0.8);
+            border: 1px solid var(--glass-border-light);
+            padding: 8px;
+            border-radius: 20px;
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
+            gap: 8px;
+        }
+
+        .tab-navigation.shrunk .tab-btn {
+            flex: 1;
+            flex-direction: row;
+            padding: 1rem 1.4rem;
+            border-radius: 14px;
+            background: transparent;
+            border: none;
+            box-shadow: none;
+            gap: 0.7rem;
+        }
+
+        .tab-navigation.shrunk .tab-btn svg {
+            width: 22px;
+            height: 22px;
+        }
+
+        .tab-navigation.shrunk .tab-btn-text {
+            flex-direction: row;
+        }
+
+        .tab-navigation.shrunk .tab-title {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .tab-navigation.shrunk .tab-desc {
+            opacity: 0;
+            max-height: 0;
+            display: none;
+        }
+
+        .tab-navigation.shrunk .tab-btn:hover:not(.active) {
+            transform: scale(1.02);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .tab-navigation.shrunk .tab-btn.active {
+            color: #ffffff;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.9), rgba(79, 70, 229, 0.95));
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.4);
+        }
+
+        .tab-content {
+            display: none;
+            opacity: 0;
+            transform: translateY(25px) scale(0.98);
+            transition: opacity 0.5s var(--ease-smooth), transform 0.5s var(--ease-smooth);
+            will-change: transform, opacity;
+        }
+
+        .tab-content.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        .glass-panel {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            padding: 2.5rem;
+            backdrop-filter: blur(35px) saturate(180%);
+            -webkit-backdrop-filter: blur(35px) saturate(180%);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.15);
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            letter-spacing: -0.01em;
+        }
+        .section-title span {
+            font-size: 1.5rem;
+            filter: drop-shadow(0 0 8px rgba(255,255,255,0.4));
+        }
+
+        .knowledge-def {
+            font-size: 1.08rem;
+            line-height: 1.75;
+            color: #e2e8f0;
+            background: rgba(255, 255, 255, 0.025);
+            border: 1px solid var(--glass-border);
+            border-left: 4px solid var(--accent-indigo);
+            padding: 1.5rem;
+            border-radius: 18px;
+            margin-bottom: 2.2rem;
+            backdrop-filter: blur(10px);
+            box-shadow: inset 0 0 20px rgba(99, 102, 241, 0.05);
+            transition: all 0.4s var(--ease-smooth);
+        }
+        .knowledge-def:hover {
+            border-left-color: var(--accent-cyan);
+            background: rgba(255, 255, 255, 0.04);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .pillars-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 1.4rem;
+            margin-bottom: 2.2rem;
+        }
+
+        .pillar-card {
+            background: var(--glass-card);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 1.6rem;
+            transition: all 0.5s var(--ease-smooth);
+            position: relative;
+            overflow: hidden;
+        }
+        .pillar-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-purple), var(--accent-cyan), var(--accent-pink));
+            opacity: 0;
+            transition: opacity 0.4s var(--ease-smooth);
+        }
+        .pillar-card:hover {
+            background: var(--glass-card-hover);
+            border-color: var(--glass-border-light);
+            transform: translateY(-6px) scale(1.01);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3), 0 0 20px rgba(99, 102, 241, 0.15);
+        }
+        .pillar-card:hover::before {
+            opacity: 1;
+        }
+        .pillar-card h3 {
+            color: #c7d2fe;
+            margin-bottom: 0.7rem;
+            font-size: 1.15rem;
+            font-weight: 700;
+        }
+        .pillar-card p {
+            color: var(--text-muted);
+            font-size: 0.96rem;
+            line-height: 1.65;
+        }
+
+        .practical-section {
+            margin-top: 2.2rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--glass-border);
+        }
+
+        .action-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+            margin-bottom: 2.2rem;
+        }
+
+        .action-item {
+            display: flex;
+            gap: 1.3rem;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 1.4rem;
+            align-items: flex-start;
+            transition: all 0.4s var(--ease-smooth);
+        }
+        .action-item:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(129, 140, 248, 0.4);
+            transform: translateX(6px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+        }
+        .action-icon {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.25), rgba(56, 189, 248, 0.25));
+            width: 52px;
+            height: 52px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 16px;
+            flex-shrink: 0;
+            border: 1px solid rgba(129, 140, 248, 0.3);
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.2);
+            transition: transform 0.4s var(--ease-bounce);
+        }
+        .action-item:hover .action-icon {
+            transform: scale(1.15) rotate(5deg);
+        }
+        .action-content h4 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #f1f5f9;
+            margin-bottom: 0.4rem;
+        }
+        .action-content p {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        .pro-tip {
+            background: linear-gradient(135deg, rgba(234, 179, 8, 0.15), rgba(245, 158, 11, 0.06));
+            border: 1px solid rgba(245, 158, 11, 0.4);
+            border-radius: 20px;
+            padding: 1.4rem 1.6rem;
+            color: #fef08a;
+            font-size: 0.98rem;
+            line-height: 1.65;
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            box-shadow: 0 8px 25px rgba(245, 158, 11, 0.15);
+            transition: all 0.4s var(--ease-smooth);
+        }
+        .pro-tip:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(245, 158, 11, 0.25);
+        }
+        .pro-tip-icon {
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .quiz-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.4rem;
+            color: var(--text-muted);
+            font-size: 0.98rem;
+            font-weight: 700;
+        }
+
+        .score-badge {
+            background: rgba(99, 102, 241, 0.25);
+            color: #c7d2fe;
+            padding: 0.45rem 1.1rem;
+            border-radius: 30px;
+            border: 1px solid rgba(99, 102, 241, 0.4);
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.2);
+        }
+
+        #score {
+            display: inline-block;
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 2.2rem;
+            padding: 2px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple), var(--accent-pink));
+            border-radius: 10px;
+            transition: width 0.6s var(--ease-smooth);
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.8);
+        }
+
+        #quiz-container {
+            transition: opacity 0.4s var(--ease-smooth), transform 0.4s var(--ease-smooth);
+        }
+
+        .question-text {
+            font-size: 1.35rem;
+            font-weight: 800;
+            line-height: 1.55;
+            margin-bottom: 2rem;
+            color: #ffffff;
+            letter-spacing: -0.01em;
+        }
+
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .option-btn {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 1.2rem 1.5rem;
+            color: var(--text-main);
+            font-size: 1.02rem;
+            font-weight: 500;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.35s var(--ease-smooth);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            border-color: rgba(129, 140, 248, 0.5);
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateX(8px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+
+        .option-btn:disabled {
+            cursor: default;
+        }
+
+        .option-btn.correct {
+            background: var(--correct-bg) !important;
+            border-color: var(--correct-border) !important;
+            color: #4ade80 !important;
+            box-shadow: 0 0 20px rgba(34, 197, 94, 0.3);
+            animation: bounceSelect 0.4s var(--ease-bounce);
+        }
+
+        .option-btn.incorrect {
+            background: var(--incorrect-bg) !important;
+            border-color: var(--incorrect-border) !important;
+            color: #f87171 !important;
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+            animation: shake 0.4s ease-in-out;
+        }
+
+        @keyframes bounceSelect {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-6px); }
+            40%, 80% { transform: translateX(6px); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(14px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes scorePop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.35); color: #4ade80; }
+            100% { transform: scale(1); }
+        }
+
+        .explanation-box {
+            display: none;
+            padding: 1.4rem 1.6rem;
+            border-radius: 16px;
+            font-size: 1rem;
+            line-height: 1.65;
+            margin-bottom: 2rem;
+            animation: fadeInSlide 0.5s var(--ease-smooth);
+        }
+
+        @keyframes fadeInSlide {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .explanation-box.show-correct {
+            background: var(--correct-bg);
+            border: 1px solid var(--correct-border);
+            color: #bbf7d0;
+        }
+
+        .explanation-box.show-incorrect {
+            background: var(--incorrect-bg);
+            border: 1px solid var(--incorrect-border);
+            color: #fecaca;
+        }
+
+        .action-btn {
+            background: linear-gradient(135deg, var(--accent-purple), #4f46e5);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 1rem 2.4rem;
+            border-radius: 14px;
+            font-size: 1.05rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: none;
+            margin-left: auto;
+            transition: all 0.4s var(--ease-smooth);
+            box-shadow: 0 10px 25px rgba(99, 102, 241, 0.4);
+        }
+
+        .action-btn:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 15px 35px rgba(99, 102, 241, 0.6);
+        }
+
+        .result-screen {
+            text-align: center;
+            display: none;
+            padding: 2.5rem 1rem;
+            transition: opacity 0.5s var(--ease-smooth), transform 0.5s var(--ease-smooth);
+        }
+
+        .result-title {
+            font-size: 2.2rem;
+            font-weight: 900;
+            color: #ffffff;
+            margin-bottom: 0.6rem;
+        }
+
+        .result-score {
+            font-size: 4.5rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #a5b4fc, #6366f1, #38bdf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 1rem 0;
+            letter-spacing: -0.04em;
+            filter: drop-shadow(0 10px 20px rgba(99, 102, 241, 0.3));
+        }
+
+        .star-rating {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            letter-spacing: 0.3rem;
+            filter: drop-shadow(0 0 10px rgba(250, 204, 21, 0.5));
+        }
+
+        .feedback-text {
+            color: var(--text-muted);
+            font-size: 1.15rem;
+            margin-bottom: 2.5rem;
+            max-width: 520px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.65;
+        }
+
+        .restart-btn {
+            background: linear-gradient(135deg, var(--accent-purple), #4f46e5);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 1.1rem 3rem;
+            border-radius: 16px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.4s var(--ease-smooth);
+            box-shadow: 0 12px 30px rgba(99, 102, 241, 0.5);
+        }
+
+        .restart-btn:hover {
+            transform: translateY(-3px) scale(1.03);
+            box-shadow: 0 18px 40px rgba(99, 102, 241, 0.7);
+        }
+
+        .site-footer {
+            width: 100vw;
+            background: rgba(5, 7, 15, 0.85);
+            border-top: 1px solid var(--glass-border);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 1.8rem 1rem;
+            margin-top: 4rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        .footer-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1.2rem;
+        }
+
+        .footer-left {
+            display: flex;
+            align-items: center;
+            gap: 0.9rem;
+            cursor: pointer;
+        }
+
+        .footer-badge-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #a855f7, #6366f1);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-weight: 900;
+            font-size: 1rem;
+            box-shadow: 0 0 15px rgba(168, 85, 247, 0.5);
+            transition: transform 0.3s var(--ease-bounce);
+        }
+
+        .footer-left:hover .footer-badge-icon {
+            transform: scale(1.15) rotate(-5deg);
+        }
+
+        .copyright-text {
+            color: var(--text-muted);
+            font-size: 0.92rem;
+            font-weight: 500;
+        }
+
+        .footer-links {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .footer-link {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.92rem;
+            font-weight: 500;
+            transition: color 0.3s ease, transform 0.3s ease;
+        }
+
+        .footer-link:hover {
+            color: var(--accent-cyan);
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 680px) {
+            body { padding: 1.5rem 0.8rem 0 0.8rem; }
+            .glass-panel { padding: 1.6rem; border-radius: 22px; }
+            .brand-title { font-size: 2.2rem; }
+            .result-score { font-size: 3.5rem; }
+            .action-item { flex-direction: column; }
+            .tab-navigation { grid-template-columns: 1fr; }
+            .footer-inner { flex-direction: column; text-align: center; justify-content: center; }
+            .footer-links { gap: 1.2rem; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="ambient-glow glow-1"></div>
+<div class="ambient-glow glow-2"></div>
+<div class="ambient-glow glow-3"></div>
+
+<div class="container">
+    <a href="01.html" class="back-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+        Back to Oneself
+    </a>
+
+    <div class="header">
+        <span class="header-badge">Core Skill #05</span>
+        <div>
+            <h1 id="skill-title" class="brand-title" onclick="resetToHome()" title="Click to reset view">Self-Perception</h1>
+        </div>
+        <p id="skill-subtitle">Understand your self-image and how you see yourself</p>
+    </div>
+
+    <div class="tab-navigation" id="tab-nav">
+        <button class="tab-btn" onclick="switchTab('knowledge-tab')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
+            <div class="tab-btn-text">
+                <span class="tab-title">Essential Knowledge</span>
+                <span class="tab-desc">Explore theories, pillars &amp; practical frameworks</span>
+            </div>
+        </button>
+        <button class="tab-btn" onclick="switchTab('quiz-tab')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+            <div class="tab-btn-text">
+                <span class="tab-title">Quiz Assessment</span>
+                <span class="tab-desc">Test your understanding with 10 random questions</span>
+            </div>
+        </button>
+    </div>
+
+    <div id="knowledge-tab" class="tab-content">
+        <div class="glass-panel">
+            <div class="section-title">
+                <span>🪞</span> The Essence of Self-Perception
+            </div>
+            <div id="knowledge-def" class="knowledge-def">Loading theory...</div>
+
+            <div class="section-title" style="margin-top: 2.2rem;">
+                <span>🏛️</span> Core Pillars
+            </div>
+            <div id="pillars-grid" class="pillars-grid"></div>
+
+            <div class="practical-section">
+                <div class="section-title">
+                    <span>🚀</span> Practical Action Framework
+                </div>
+                <div class="action-list">
+                    <div class="action-item">
+                        <div class="action-icon">🔎</div>
+                        <div class="action-content">
+                            <h4>Evidence Check</h4>
+                            <p>When you notice a strong belief about yourself ("I'm bad at this"), test it against actual results or specific feedback before accepting it.</p>
+                        </div>
+                    </div>
+
+                    <div class="action-item">
+                        <div class="action-icon">🧭</div>
+                        <div class="action-content">
+                            <h4>Personal Standards</h4>
+                            <p>Write down what "doing well" looks like for you, so you can judge your own work without waiting for someone else's approval.</p>
+                        </div>
+                    </div>
+
+                    <div class="action-item">
+                        <div class="action-icon">📊</div>
+                        <div class="action-content">
+                            <h4>Then-vs-Now Comparison</h4>
+                            <p>Instead of comparing yourself to someone else's current stage, compare where you are now to where you were six months ago.</p>
+                        </div>
+                    </div>
+
+                    <div class="action-item">
+                        <div class="action-icon">🗣️</div>
+                        <div class="action-content">
+                            <h4>Trusted Feedback Circle</h4>
+                            <p>Ask two or three people you trust for honest input, so your self-image reflects more than just your own perspective.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pro-tip">
+                    <span class="pro-tip-icon">💡</span>
+                    <div>
+                        <strong>Pro-Tip:</strong> If a belief about yourself hasn't been tested against real evidence recently, treat it as a hypothesis, not a fact.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="quiz-tab" class="tab-content">
+        <div class="glass-panel">
+            <div class="quiz-header">
+                <span>Question <span id="current-question">1</span>/<span id="total-questions">10</span></span>
+                <span class="score-badge">Score: <span id="score">0</span></span>
+            </div>
+
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+
+            <div id="quiz-container">
+                <div class="question-text" id="question-text">Loading question...</div>
+                <div class="options-list" id="options-list"></div>
+                <div class="explanation-box" id="explanation-box"></div>
+                <button class="action-btn" id="next-btn" onclick="nextQuestion()">Continue</button>
+            </div>
+
+            <div class="result-screen" id="result-screen">
+                <h2 class="result-title">Assessment Complete!</h2>
+                <div class="result-score" id="final-score">0/10</div>
+                <div class="star-rating" id="star-rating">⭐⭐⭐</div>
+                <p class="feedback-text" id="feedback-text">Great job on completing the assessment!</p>
+                <button class="restart-btn" onclick="resetQuiz()">Retake Quiz</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer class="site-footer">
+    <div class="footer-inner">
+        <div class="footer-left" onclick="resetToHome()">
+            <div class="footer-badge-icon">S</div>
+            <span class="copyright-text">&copy; 2026 SkillUp. All rights reserved.</span>
+        </div>
+        <div class="footer-links">
+            <a href="#" class="footer-link">Privacy Policy</a>
+            <a href="#" class="footer-link">Terms of Service</a>
+            <a href="#" class="footer-link">Support</a>
+        </div>
+    </div>
+</footer>
+
+<script>
+    /* =========================================================
+       TAB SWITCHING
+       ========================================================= */
+    function switchTab(tabId) {
+        document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+
+        const nav = document.getElementById('tab-nav');
+        nav.classList.add('shrunk');
+
+        const activeContent = document.getElementById(tabId);
+        if (activeContent) activeContent.classList.add('active');
+
+        const activeBtn = document.querySelector(`[onclick="switchTab('${tabId}')"]`);
+        if (activeBtn) activeBtn.classList.add('active');
+
+        if (tabId === 'quiz-tab' && quizState.questions.length === 0) {
+            startQuiz();
+        }
+    }
+
+    function resetToHome() {
+        const nav = document.getElementById('tab-nav');
+        nav.classList.remove('shrunk');
+        document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    }
+
+    /* =========================================================
+       CONTENT DATA
+       ========================================================= */
+    const selfDiscoveryContent = {
+        definition: "Self-perception is the internal picture you carry of your own traits, abilities, and worth. Because that picture can drift from reality in either direction, building a healthy self-perception means regularly checking your self-image against real evidence \u2014 instead of relying only on old beliefs, comparison with others, or the need for outside approval.",
+        pillars: [
+            {
+                title: "Self-Image Accuracy",
+                text: "Making sure the way you see your abilities and traits actually matches the evidence, not an outdated or distorted story."
+            },
+            {
+                title: "Confidence From Evidence",
+                text: "Building trust in your own ability based on real practice and results, rather than needing constant outside reassurance."
+            },
+            {
+                title: "Internal Validation",
+                text: "Judging your own effort and worth by your own standards first, letting others' opinions add to that rather than define it."
+            },
+            {
+                title: "Fair Comparison",
+                text: "Measuring your growth against your own past self instead of against people at a completely different stage."
+            }
+        ]
+    };
+
+    /* =========================================================
+       QUIZ QUESTION BANK
+       Each question has 4 options, each with its OWN explanation.
+       correctIndex marks the correct option (index into "options").
+       ========================================================= */
+    const quizBank = [
+        {
+            question: "What is self-perception?",
+            options: [
+                { text: "How other people rank you compared to their friends", explanation: "Self-perception concerns your own view, not other people's rankings." },
+                { text: "The way you see and understand yourself", explanation: "Correct. Self-perception is your internal picture of who you are." },
+                { text: "A fixed score assigned to you at birth", explanation: "Self-perception can change over time; it isn't a fixed birth score." },
+                { text: "Only your physical appearance", explanation: "Self-perception includes abilities, personality, and values, not just appearance." },
+            ],
+            correctIndex: 1
+        },
+        {
+            question: "What is \"self-image\"?",
+            options: [
+                { text: "A photo you post on social media", explanation: "A photo is a literal image, not a mental self-concept." },
+                { text: "The mental picture you hold of your own traits, abilities, and identity", explanation: "Correct. Self-image is the internal mental picture you carry of yourself." },
+                { text: "The opinion your closest friend has of you", explanation: "A friend's opinion is external and separate from your own self-image." },
+                { text: "A list of your achievements", explanation: "Achievements are one input, but self-image is broader than a list of them." },
+            ],
+            correctIndex: 1
+        },
+        {
+            question: "What is \"confidence\" in the context of self-perception?",
+            options: [
+                { text: "Never feeling nervous about anything", explanation: "Confident people can still feel nervous; confidence isn't the absence of nerves." },
+                { text: "A belief in your own ability to handle situations or tasks", explanation: "Correct. Confidence is trust in your own capability to handle what comes up." },
+                { text: "Constantly telling others how good you are", explanation: "Genuine confidence doesn't require constant self-promotion to others." },
+                { text: "Ignoring your own limitations completely", explanation: "Confidence can coexist with an honest awareness of your limitations." },
+            ],
+            correctIndex: 1
+        },
+        {
+            question: "What is \"self-esteem\"?",
+            options: [
+                { text: "Your overall sense of personal worth or value", explanation: "Correct. Self-esteem reflects how much you value and respect yourself overall." },
+                { text: "The number of followers you have online", explanation: "Online followers are an external metric, not a measure of inner worth." },
+                { text: "How talented you are compared to others", explanation: "Talent comparison is different from your underlying sense of worth." },
+                { text: "A skill that can be measured with a test score", explanation: "Self-esteem isn't something captured by a single test score." },
+            ],
+            correctIndex: 0
+        },
+        {
+            question: "What is the difference between internal and external validation?",
+            options: [
+                { text: "There is no real difference", explanation: "They come from different sources and can lead to different outcomes." },
+                { text: "Internal validation comes from your own judgment; external validation comes from others' approval", explanation: "Correct. Internal validation is self-generated, while external validation depends on others." },
+                { text: "External validation is always more reliable", explanation: "External validation can be inconsistent since other people's approval can change." },
+                { text: "Internal validation only applies to work achievements", explanation: "Internal validation can apply to any area of life, not just work." },
+            ],
+            correctIndex: 1
+        },
+        {
+            question: "What does \"distorted self-perception\" mean?",
+            options: [
+                { text: "A self-image that is significantly inaccurate compared to reality", explanation: "Correct. Distorted self-perception means your self-view diverges meaningfully from reality." },
+                { text: "Any self-image that is slightly imperfect", explanation: "Minor imperfection in self-view is normal and doesn't necessarily count as distortion." },
+                { text: "A self-image shared by many people", explanation: "Whether many people share a self-image doesn't determine if it's distorted." },
+                { text: "A self-image based only on positive traits", explanation: "Distortion can go in either direction — overly negative or overly positive." },
+            ],
+            correctIndex: 0
+        },
+        {
+            question: "How can self-image affect behavior?",
+            options: [
+                { text: "It has no real connection to behavior", explanation: "Self-image commonly shapes decisions, effort, and willingness to take risks." },
+                { text: "A person's self-image can influence the choices and risks they're willing to take", explanation: "Correct. How you see yourself often shapes what you attempt and how you act." },
+                { text: "Self-image only affects how people dress", explanation: "Self-image affects far more than appearance choices." },
+                { text: "Self-image only matters in childhood", explanation: "Self-image continues to shape behavior throughout life, not only in childhood." },
+            ],
+            correctIndex: 1
+        },
+        {
+            question: "You believe you're \"bad at math,\" even though your grades are actually average. What is likely happening?",
+            options: [
+                { text: "Your self-perception in this area may be distorted compared to the actual evidence", explanation: "Correct. A gap between belief and actual evidence is a sign of possible distorted self-perception." },
+                { text: "Your grades must be wrong", explanation: "The grades are the actual evidence; the belief is what should be questioned." },
+                { text: "This belief is definitely accurate and unchangeable", explanation: "Beliefs like this can be inaccurate and are often open to change." },
+                { text: "Math ability has nothing to do with self-perception", explanation: "Beliefs about a skill area are a core part of self-perception." },
+            ],
+            correctIndex: 0
+        },
+        {
+            question: "A coworker regularly compares themselves unfavorably to a highly experienced colleague, feeling bad every time. What would help most?",
+            options: [
+                { text: "Continuing the same comparison to stay motivated", explanation: "Comparing to someone at a very different stage often just causes discouragement." },
+                { text: "Comparing their own growth over time instead of only comparing to someone at a different stage", explanation: "Correct. Tracking personal growth over time gives a fairer, more motivating picture." },
+                { text: "Avoiding the experienced colleague altogether", explanation: "Avoidance doesn't address the underlying comparison habit." },
+                { text: "Assuming they will never improve", explanation: "Assuming permanent inability isn't supported by the situation." },
+            ],
+            correctIndex: 1
+        },
+        {
+            question: "Someone constantly seeks compliments before they feel good about their work. What does this suggest?",
+            options: [
+                { text: "They may be relying heavily on external validation rather than internal judgment", explanation: "Correct. Needing others' approval before feeling good is a sign of leaning on external validation." },
+                { text: "They have unusually high self-esteem", explanation: "This pattern more often points to fragile, not high, self-esteem." },
+                { text: "This is the healthiest possible approach", explanation: "Relying solely on others' approval is generally considered less stable long-term." },
+                { text: "This has nothing to do with self-perception", explanation: "This is directly related to how someone perceives their own worth." },
+            ],
+            correctIndex: 0
+        },
+        {
+            question: "A student assumes they'll fail an exam despite being well-prepared, based on past unrelated failures. What's happening here?",
+            options: [
+                { text: "Their self-perception may be distorted by past experiences that don't reflect current preparation", explanation: "Correct. Letting unrelated past failures override current evidence is a form of distorted self-perception." },
+                { text: "This assumption is definitely accurate", explanation: "The assumption isn't well-supported by the actual current evidence." },
+                { text: "Preparation never affects exam outcomes", explanation: "Preparation is a strong factor in most exam outcomes." },
+                { text: "This has nothing to do with self-image", explanation: "This expectation is closely tied to the student's self-image around exams." },
+            ],
+            correctIndex: 0
+        },
+        {
+            question: "Someone with healthy self-esteem receives criticism on a project. What is the most likely reaction?",
+            options: [
+                { text: "They consider the criticism fairly without concluding they are worthless", explanation: "Correct. Healthy self-esteem allows criticism of work without it collapsing your sense of worth." },
+                { text: "They immediately assume they are a failure as a person", explanation: "Equating one criticism with total worthlessness reflects fragile self-esteem." },
+                { text: "They reject all criticism without any consideration", explanation: "Rejecting all criticism outright avoids any potential for growth." },
+                { text: "They stop working on similar projects forever", explanation: "Quitting entirely is an extreme reaction not typical of healthy self-esteem." },
+            ],
+            correctIndex: 0
+        },
+        {
+            question: "A person constantly changes their opinions to match whoever they're speaking with, and feels lost when alone. What might this reflect?",
+            options: [
+                { text: "A strong, stable self-image", explanation: "A stable self-image usually holds steadier across different social situations." },
+                { text: "Heavy reliance on others for a sense of identity and validation", explanation: "Correct. Constantly shifting to match others suggests leaning on external sources for identity." },
+                { text: "Extremely high self-esteem", explanation: "This pattern is more consistent with insecurity than high self-esteem." },
+                { text: "No connection to self-perception at all", explanation: "This is directly related to how the person perceives and defines themselves." },
+            ],
+            correctIndex: 1
+        },
+        {
+            question: "Someone believes they are unlikeable, but people around them consistently seek out their company. What does this suggest?",
+            options: [
+                { text: "Their self-perception may not match the reality others observe", explanation: "Correct. A mismatch between self-belief and others' consistent behavior can indicate distorted self-perception." },
+                { text: "The people around them must be lying", explanation: "Assuming everyone is lying is a less likely explanation than a mismatch in self-view." },
+                { text: "Their belief is certainly correct", explanation: "The consistent outside evidence suggests the belief may not be accurate." },
+                { text: "This has no relevance to self-perception", explanation: "This scenario is a clear example of self-perception versus outside evidence." },
+            ],
+            correctIndex: 0
+        },
+        {
+            question: "A person avoids applying for a promotion, believing they \"aren't leadership material,\" despite positive feedback from managers. What's the healthiest next step?",
+            options: [
+                { text: "Accept the belief permanently without question", explanation: "Accepting the belief without checking it against evidence maintains a possible distortion." },
+                { text: "Examine whether the belief matches the actual feedback they've received", explanation: "Correct. Comparing the belief to actual feedback helps test whether it's accurate." },
+                { text: "Avoid ever discussing leadership again", explanation: "Avoiding the topic prevents any reassessment of the belief." },
+                { text: "Assume the managers are simply being polite", explanation: "Dismissing genuine feedback as mere politeness isn't a well-supported assumption." },
+            ],
+            correctIndex: 1
+        },
+        {
+            question: "What is a practical way to build a more accurate self-image?",
+            options: [
+                { text: "Only listen to your own opinion of yourself", explanation: "Relying only on your own view can miss blind spots." },
+                { text: "Gather feedback from multiple trusted sources and compare it with your self-view", explanation: "Correct. Comparing multiple honest perspectives with your own helps refine accuracy." },
+                { text: "Only listen to critics", explanation: "Listening only to critics skews the picture toward the negative." },
+                { text: "Avoid any information that challenges your current view", explanation: "Avoiding challenging information prevents correcting inaccuracies." },
+            ],
+            correctIndex: 1
+        },
+        {
+            question: "What is a healthy way to build confidence in a specific skill?",
+            options: [
+                { text: "Avoid practicing so you never risk failing", explanation: "Avoiding practice prevents the skill, and the confidence in it, from developing." },
+                { text: "Practice consistently and track concrete improvement over time", explanation: "Correct. Consistent practice with visible progress is a reliable way to build genuine confidence." },
+                { text: "Only compare yourself to top experts", explanation: "Comparing only to top experts can undermine confidence rather than build it." },
+                { text: "Wait for someone else to tell you that you're confident", explanation: "Confidence built this way depends entirely on others rather than your own evidence." },
+            ],
+            correctIndex: 1
+        },
+        {
+            question: "What is a good strategy for relying more on internal validation?",
+            options: [
+                { text: "Set your own standards for a job well done and check your work against them", explanation: "Correct. Judging your work against your own standards builds a self-generated sense of satisfaction." },
+                { text: "Ask for approval from as many people as possible before feeling satisfied", explanation: "Seeking mass approval keeps your satisfaction dependent on others." },
+                { text: "Only feel good about work when someone praises it publicly", explanation: "This keeps satisfaction tied entirely to public praise rather than your own judgment." },
+                { text: "Avoid ever evaluating your own work", explanation: "Avoiding self-evaluation prevents internal validation from developing at all." },
+            ],
+            correctIndex: 0
+        },
+        {
+            question: "What is an effective way to reduce unhealthy comparison with others?",
+            options: [
+                { text: "Compare your current self to your own past self instead of to other people", explanation: "Correct. Comparing yourself over time gives a fairer, more motivating measure of progress." },
+                { text: "Compare yourself to the most successful person you know as often as possible", explanation: "Constant comparison to top performers tends to fuel discouragement rather than growth." },
+                { text: "Avoid noticing your own progress entirely", explanation: "Ignoring your own progress removes a useful, encouraging reference point." },
+                { text: "Stop setting any personal goals", explanation: "Goals still provide useful direction even while reducing comparison with others." },
+            ],
+            correctIndex: 0
+        },
+        {
+            question: "What is one way to check whether your self-perception in an area might be distorted?",
+            options: [
+                { text: "Compare your self-belief against concrete evidence, like results or specific feedback", explanation: "Correct. Checking a belief against real evidence is a direct way to test its accuracy." },
+                { text: "Assume your gut feeling is always accurate", explanation: "Gut feelings can be influenced by bias and aren't always accurate." },
+                { text: "Avoid ever examining the belief", explanation: "Avoiding examination leaves a potential distortion unaddressed." },
+                { text: "Ask only people who already agree with you", explanation: "Asking only people who agree with you can reinforce a biased view rather than test it." },
+            ],
+            correctIndex: 0
+        },
+        {
+            question: "Which statement reflects a healthy, balanced self-image?",
+            options: [
+                { text: "\"I have no flaws at all.\"", explanation: "Claiming no flaws at all isn't a realistic or balanced self-view." },
+                { text: "\"I have both strengths and areas to grow, and I'm generally okay with that.\"", explanation: "Correct. Accepting both strengths and growth areas reflects balanced, healthy self-perception." },
+                { text: "\"I am only as good as my last achievement.\"", explanation: "Tying your worth entirely to your most recent achievement is an unstable basis for self-image." },
+                { text: "\"I can never trust my own judgment about myself.\"", explanation: "Distrusting your own judgment entirely prevents any stable internal sense of self." },
+            ],
+            correctIndex: 1
+        },
+        {
+            question: "Which statement best reflects reliance on internal validation?",
+            options: [
+                { text: "\"I feel good about my work because I know I did my best.\"", explanation: "Correct. This reflects judging your own effort by your own internal standard." },
+                { text: "\"I only feel good about my work if it goes viral.\"", explanation: "This ties self-worth to an external, unpredictable outcome." },
+                { text: "\"I need someone to tell me I did well before I can relax.\"", explanation: "This shows dependence on someone else's approval to feel satisfied." },
+                { text: "\"My mood depends entirely on other people's opinions of me.\"", explanation: "This reflects an identity almost entirely shaped by outside opinions." },
+            ],
+            correctIndex: 0
+        },
+        {
+            question: "Which question can help you notice a potentially distorted self-perception?",
+            options: [
+                { text: "\"Is this belief about myself actually supported by evidence, or just a feeling?\"", explanation: "Correct. This question directly tests the belief against real evidence." },
+                { text: "\"How can I convince others my belief is right?\"", explanation: "Trying to convince others doesn't test whether the belief itself is accurate." },
+                { text: "\"Who can I blame for this belief?\"", explanation: "Blame doesn't help evaluate the accuracy of a belief about yourself." },
+                { text: "\"How do I make everyone agree with this belief?\"", explanation: "Seeking agreement from others doesn't establish whether the belief is true." },
+            ],
+            correctIndex: 0
+        },
+        {
+            question: "Which behavior suggests self-image is negatively affecting someone's choices?",
+            options: [
+                { text: "Taking on a new challenge despite some nervousness", explanation: "Taking on a challenge despite nerves reflects healthy confidence, not a negative pattern." },
+                { text: "Turning down opportunities because of a belief that they \"aren't good enough,\" despite having relevant skills", explanation: "Correct. Rejecting real opportunities based on an inaccurate self-belief shows self-image limiting behavior." },
+                { text: "Asking for feedback before starting a new task", explanation: "Asking for feedback is a constructive habit, not a negative one." },
+                { text: "Setting realistic goals based on current skill level", explanation: "Setting realistic goals is a healthy, grounded approach." },
+            ],
+            correctIndex: 1
+        },
+        {
+            question: "Which of these best supports a stable sense of self-esteem?",
+            options: [
+                { text: "Basing your worth on a single recent success or failure", explanation: "Worth that swings with every outcome tends to be unstable." },
+                { text: "Recognizing your value as a person separately from any one outcome", explanation: "Correct. Separating your inherent worth from any single result supports more stable self-esteem." },
+                { text: "Comparing your worth to others constantly", explanation: "Constant comparison tends to undermine a stable sense of self-worth." },
+                { text: "Needing constant praise to feel any sense of worth", explanation: "Needing constant praise makes self-esteem dependent on an external, inconsistent source." },
+            ],
+            correctIndex: 1
+        },
+        {
+            question: "Which is a sign of overly negative, distorted self-perception?",
+            options: [
+                { text: "Acknowledging a specific weakness while also recognizing your strengths", explanation: "This reflects a balanced, accurate view of yourself." },
+                { text: "Assuming total failure after one small mistake", explanation: "Correct. Generalizing one small mistake into total failure is a distorted, overly negative pattern." },
+                { text: "Feeling proud of a genuine accomplishment", explanation: "Feeling proud of a real accomplishment is a healthy, accurate response." },
+                { text: "Setting a goal to improve a particular skill", explanation: "Setting an improvement goal reflects a constructive, realistic self-view." },
+            ],
+            correctIndex: 1
+        },
+        {
+            question: "Which is a sign of overly inflated, distorted self-perception?",
+            options: [
+                { text: "Dismissing clear, repeated feedback because you're convinced you're already perfect", explanation: "Correct. Ignoring clear, repeated evidence in favor of an inflated self-view is a sign of distortion." },
+                { text: "Accepting constructive criticism thoughtfully", explanation: "Thoughtfully accepting criticism reflects a grounded, accurate self-view." },
+                { text: "Recognizing a specific area for growth", explanation: "Recognizing a specific growth area is realistic, not inflated." },
+                { text: "Feeling confident after real, demonstrated success", explanation: "Confidence grounded in real success is an accurate response, not distortion." },
+            ],
+            correctIndex: 0
+        },
+        {
+            question: "Which strategy helps someone rely less on others' opinions for their sense of worth?",
+            options: [
+                { text: "Actively seeking approval from as many people as possible", explanation: "Seeking mass approval keeps your worth tied to outside opinions." },
+                { text: "Defining your own standards for success and checking in with yourself regularly", explanation: "Correct. Personal standards and self check-ins build a self-generated sense of worth." },
+                { text: "Avoiding any feedback from other people entirely", explanation: "Cutting off all feedback removes useful outside perspective, which isn't the same as internal validation." },
+                { text: "Comparing your worth to strangers online", explanation: "Comparing to strangers online typically undermines rather than builds stable self-worth." },
+            ],
+            correctIndex: 1
+        },
+        {
+            question: "How can an accurate self-image improve decision-making?",
+            options: [
+                { text: "It has no real effect on decisions", explanation: "Self-image often meaningfully shapes the kinds of choices people make." },
+                { text: "It helps you choose challenges and opportunities that realistically match your actual abilities", explanation: "Correct. An accurate self-view helps you pursue opportunities that genuinely fit your abilities." },
+                { text: "It guarantees you'll never fail at anything", explanation: "Even accurate self-perception doesn't eliminate the possibility of failure." },
+                { text: "It only matters for decisions about appearance", explanation: "Self-image influences decisions well beyond appearance-related choices." },
+            ],
+            correctIndex: 1
+        },
+        {
+            question: "What is the overall goal of developing healthy self-perception?",
+            options: [
+                { text: "To believe you are flawless", explanation: "Believing you are flawless isn't accurate or realistic." },
+                { text: "To see yourself accurately and treat yourself with fair, steady regard", explanation: "Correct. Healthy self-perception means an accurate view paired with steady, fair self-regard." },
+                { text: "To depend entirely on others' opinions for your sense of self", explanation: "Relying entirely on others' opinions undermines a stable sense of self." },
+                { text: "To avoid ever examining your own beliefs about yourself", explanation: "Avoiding self-examination prevents your self-view from becoming more accurate over time." },
+            ],
+            correctIndex: 1
+        },
+    ];
+
+    const QUESTIONS_PER_QUIZ = 10;
+
+    let quizState = {
+        questions: [],
+        currentIndex: 0,
+        score: 0,
+        answered: false
+    };
+
+    /* =========================================================
+       INIT
+       ========================================================= */
+    document.addEventListener('DOMContentLoaded', () => {
+        renderKnowledge();
+    });
+
+    /* =========================================================
+       KNOWLEDGE TAB RENDER
+       ========================================================= */
+    function renderKnowledge() {
+        const defEl = document.getElementById('knowledge-def');
+        defEl.style.opacity = 0;
+        defEl.textContent = selfDiscoveryContent.definition;
+        requestAnimationFrame(() => {
+            defEl.style.transition = 'opacity 0.6s ease';
+            defEl.style.opacity = 1;
+        });
+
+        const grid = document.getElementById('pillars-grid');
+        grid.innerHTML = selfDiscoveryContent.pillars.map((p, i) => `
+            <div class="pillar-card" style="animation: fadeInUp 0.5s var(--ease-smooth) ${i * 0.08}s backwards;">
+                <h3>${p.title}</h3>
+                <p>${p.text}</p>
+            </div>
+        `).join('');
+    }
+
+    /* =========================================================
+       QUIZ LOGIC
+       ========================================================= */
+    function shuffleArray(arr) {
+        const a = [...arr];
+        for (let i = a.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [a[i], a[j]] = [a[j], a[i]];
+        }
+        return a;
+    }
+
+    function startQuiz() {
+        const picked = shuffleArray(quizBank).slice(0, QUESTIONS_PER_QUIZ);
+
+        quizState.questions = picked.map(q => {
+            const optionsWithFlag = q.options.map((opt, i) => ({
+                text: opt.text,
+                explanation: opt.explanation,
+                isCorrect: i === q.correctIndex
+            }));
+            return {
+                question: q.question,
+                options: shuffleArray(optionsWithFlag)
+            };
+        });
+
+        quizState.currentIndex = 0;
+        quizState.score = 0;
+
+        document.getElementById('quiz-container').style.display = 'block';
+        document.getElementById('result-screen').style.display = 'none';
+        document.getElementById('total-questions').textContent = QUESTIONS_PER_QUIZ;
+        document.getElementById('score').textContent = 0;
+
+        renderQuestion();
+    }
+
+    function renderQuestion() {
+        const total = quizState.questions.length;
+        const idx = quizState.currentIndex;
+        const q = quizState.questions[idx];
+
+        const quizContainer = document.getElementById('quiz-container');
+        quizContainer.style.opacity = 0;
+        quizContainer.style.transform = 'translateY(10px)';
+
+        setTimeout(() => {
+            document.getElementById('current-question').textContent = idx + 1;
+            document.getElementById('progress-bar').style.width = `${(idx / total) * 100}%`;
+            document.getElementById('question-text').textContent = q.question;
+
+            const list = document.getElementById('options-list');
+            list.innerHTML = '';
+            q.options.forEach((opt, i) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.style.animation = `fadeInUp 0.4s var(--ease-smooth) ${i * 0.06}s backwards`;
+                btn.textContent = opt.text;
+                btn.onclick = () => selectOption(i);
+                list.appendChild(btn);
+            });
+
+            const explBox = document.getElementById('explanation-box');
+            explBox.className = 'explanation-box';
+            explBox.style.display = 'none';
+            explBox.innerHTML = '';
+
+            document.getElementById('next-btn').style.display = 'none';
+            quizState.answered = false;
+
+            requestAnimationFrame(() => {
+                quizContainer.style.opacity = 1;
+                quizContainer.style.transform = 'translateY(0)';
+            });
+        }, 180);
+    }
+
+    function selectOption(selectedIdx) {
+        if (quizState.answered) return;
+        quizState.answered = true;
+
+        const q = quizState.questions[quizState.currentIndex];
+        const selectedOpt = q.options[selectedIdx];
+        const correctIdx = q.options.findIndex(o => o.isCorrect);
+        const isCorrect = selectedOpt.isCorrect;
+
+        const buttons = document.querySelectorAll('#options-list .option-btn');
+        buttons.forEach((btn, i) => {
+            btn.disabled = true;
+            if (i === correctIdx) btn.classList.add('correct');
+            else if (i === selectedIdx) btn.classList.add('incorrect');
+        });
+
+        if (isCorrect) {
+            quizState.score++;
+            const scoreEl = document.getElementById('score');
+            scoreEl.textContent = quizState.score;
+            scoreEl.style.animation = 'none';
+            void scoreEl.offsetWidth;
+            scoreEl.style.animation = 'scorePop 0.4s var(--ease-bounce)';
+        }
+
+        const explBox = document.getElementById('explanation-box');
+        explBox.classList.add(isCorrect ? 'show-correct' : 'show-incorrect');
+        explBox.style.display = 'block';
+        explBox.innerHTML = `<strong>${isCorrect ? '✅ Correct!' : '❌ Not quite.'}</strong><br>${selectedOpt.explanation}`;
+
+        const nextBtn = document.getElementById('next-btn');
+        const isLast = quizState.currentIndex === quizState.questions.length - 1;
+        nextBtn.textContent = isLast ? 'View Results' : 'Continue';
+        nextBtn.style.display = 'inline-block';
+        nextBtn.style.animation = 'fadeInUp 0.4s var(--ease-smooth)';
+    }
+
+    function nextQuestion() {
+        quizState.currentIndex++;
+        if (quizState.currentIndex >= quizState.questions.length) {
+            showResults();
+        } else {
+            renderQuestion();
+        }
+    }
+
+    function showResults() {
+        document.getElementById('progress-bar').style.width = '100%';
+
+        const quizContainer = document.getElementById('quiz-container');
+        quizContainer.style.opacity = 0;
+
+        setTimeout(() => {
+            quizContainer.style.display = 'none';
+
+            const resultScreen = document.getElementById('result-screen');
+            resultScreen.style.display = 'block';
+            resultScreen.style.opacity = 0;
+            resultScreen.style.transform = 'scale(0.96)';
+
+            const total = quizState.questions.length;
+            const score = quizState.score;
+            const pct = score / total;
+
+            document.getElementById('final-score').textContent = `${score}/${total}`;
+
+            let stars, feedback;
+            if (pct === 1) {
+                stars = '⭐⭐⭐⭐⭐';
+                feedback = "Outstanding! You have a strong, honest understanding of self-perception.";
+            } else if (pct >= 0.8) {
+                stars = '⭐⭐⭐⭐';
+                feedback = "Great job! You clearly grasp most of the key ideas — just a few spots to revisit.";
+            } else if (pct >= 0.6) {
+                stars = '⭐⭐⭐';
+                feedback = "Solid effort! Review the Essential Knowledge tab to sharpen a few concepts.";
+            } else if (pct >= 0.4) {
+                stars = '⭐⭐';
+                feedback = "You're getting there — go back through the theory before trying again.";
+            } else {
+                stars = '⭐';
+                feedback = "Don't worry — building an accurate self-perception is a process. Revisit the knowledge tab and try again.";
+            }
+
+            document.getElementById('star-rating').textContent = stars;
+            document.getElementById('feedback-text').textContent = feedback;
+
+            requestAnimationFrame(() => {
+                resultScreen.style.opacity = 1;
+                resultScreen.style.transform = 'scale(1)';
+            });
+        }, 400);
+    }
+
+    function resetQuiz() {
+        const resultScreen = document.getElementById('result-screen');
+        resultScreen.style.opacity = 0;
+        setTimeout(() => {
+            quizState.questions = [];
+            startQuiz();
+        }, 300);
+    }
+</script>
+
+</body>
+</html>
